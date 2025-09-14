@@ -6,6 +6,11 @@ namespace DevexpApiSdk.Messages.Models
     {
         public string Content { get; set; }
         public string From { get; set; }
-        public Contact To { get; set; }
+        public CreateMessageContactRequest To { get; set; }
+    }
+
+    public class CreateMessageContactRequest
+    {
+        public Guid Id { get; set; }
     }
 }

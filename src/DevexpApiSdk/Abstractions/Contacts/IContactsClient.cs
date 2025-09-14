@@ -1,18 +1,51 @@
+using DevexpApiSdk.Common;
 using DevexpApiSdk.Contacts.Models;
 
 namespace DevexpApiSdk.Contacts
 {
     public interface IContactsClient
     {
-        Task<IEnumerable<Contact>> GetAllContactsAsync();
-        Task<Contact> GetContactByIdAsync(int contactId);
-        Task<Contact> AddContactAsync(string contactName, string contactPhone);
-        Task<Contact> AddContactAsync(CreateContactRequest createContactRequest);
-        Task<IEnumerable<Contact>> AddContactsAsync(
-            IEnumerable<CreateContactRequest> createContactRequests
+        Task<IPagedResult<Contact>> GetContactsAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken ct = default
         );
-        Task<Contact> UpdateContactAsync(int contactId, string contactName, string contactPhone);
-        Task<Contact> UpdateContactAsync(Contact updateContactRequest);
-        Task<IEnumerable<Contact>> UpdateContactsAsync(IEnumerable<Contact> updateContactRequests);
+        Task<IPagedResult<Contact>> GetContactsAsync(
+            int pageNumber,
+            CancellationToken ct = default
+        );
+        Task<Contact> GetContactByIdAsync(Guid contactId, CancellationToken ct = default);
+        Task<Contact> AddContactAsync(
+            string contactName,
+            string contactPhone,
+            CancellationToken ct = default
+        );
+        Task<Contact> AddContactAsync(
+            CreateContactRequest createContactRequest,
+            CancellationToken ct = default
+        );
+        Task<IReadOnlyList<Contact>> AddContactsAsync(
+            IEnumerable<CreateContactRequest> createContactRequests,
+            CancellationToken ct = default
+        );
+        Task<Contact> UpdateContactAsync(
+            Guid contactId,
+            string contactName,
+            string contactPhone,
+            CancellationToken ct = default
+        );
+        Task<Contact> UpdateContactAsync(
+            Contact updateContactRequest,
+            CancellationToken ct = default
+        );
+        Task<IReadOnlyList<Contact>> UpdateContactsAsync(
+            IEnumerable<Contact> updateContactRequests,
+            CancellationToken ct = default
+        );
+
+        Task DeleteContactAsync(Guid contactId, CancellationToken ct = default);
+        Task DeleteContactAsync(Contact contact, CancellationToken ct = default);
+        Task DeleteContactsAsync(IEnumerable<Guid> contactIds, CancellationToken ct = default);
+        Task DeleteContactsAsync(IEnumerable<Contact> contacts, CancellationToken ct = default);
     }
 }
