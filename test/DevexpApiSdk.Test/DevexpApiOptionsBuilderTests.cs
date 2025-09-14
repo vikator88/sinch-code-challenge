@@ -10,7 +10,7 @@ namespace DevexpApiSdk.Tests.Common
         [Test]
         public void Build_DefaultOptions_ShouldMatchExpectedDefaults()
         {
-            var options = ApiOptionsBuilder.CreateDefault().Build();
+            var options = DevexpApiOptionsBuilder.CreateDefault().Build();
 
             Assert.That(options.ApiKey, Is.EqualTo(string.Empty));
             Assert.That(options.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
@@ -34,7 +34,7 @@ namespace DevexpApiSdk.Tests.Common
         [Test]
         public void WithApiKey_ShouldSetApiKey()
         {
-            var options = ApiOptionsBuilder.CreateDefault().WithApiKey("myKey").Build();
+            var options = DevexpApiOptionsBuilder.CreateDefault().WithApiKey("myKey").Build();
 
             Assert.That(options.ApiKey, Is.EqualTo("myKey"));
         }
@@ -44,7 +44,7 @@ namespace DevexpApiSdk.Tests.Common
         {
             var timeout = TimeSpan.FromSeconds(10);
 
-            var options = ApiOptionsBuilder.CreateDefault().WithTimeout(timeout).Build();
+            var options = DevexpApiOptionsBuilder.CreateDefault().WithTimeout(timeout).Build();
 
             Assert.That(options.Timeout, Is.EqualTo(timeout));
         }
@@ -54,7 +54,7 @@ namespace DevexpApiSdk.Tests.Common
         {
             var delay = TimeSpan.FromSeconds(5);
 
-            var options = ApiOptionsBuilder
+            var options = DevexpApiOptionsBuilder
                 .CreateDefault()
                 .EnableRetries(maxAttempts: 5, delay: delay)
                 .Build();
@@ -67,7 +67,7 @@ namespace DevexpApiSdk.Tests.Common
         [Test]
         public void EnableBulkOperations_ShouldEnableBulkOperationsAndSetDegree()
         {
-            var options = ApiOptionsBuilder.CreateDefault().EnableBulkOperations(8).Build();
+            var options = DevexpApiOptionsBuilder.CreateDefault().EnableBulkOperations(8).Build();
 
             Assert.That(options.EnableBulkOperations, Is.True);
             Assert.That(options.MaxDegreeOfParallelism, Is.EqualTo(8));
@@ -78,7 +78,7 @@ namespace DevexpApiSdk.Tests.Common
         {
             var fakeLogger = new FakeLogger();
 
-            var options = ApiOptionsBuilder.CreateDefault().EnableLogging(fakeLogger).Build();
+            var options = DevexpApiOptionsBuilder.CreateDefault().EnableLogging(fakeLogger).Build();
 
             Assert.That(options.EnableLogging, Is.True);
             Assert.That(options.Logger, Is.EqualTo(fakeLogger));
@@ -89,7 +89,10 @@ namespace DevexpApiSdk.Tests.Common
         {
             var customOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
 
-            var options = ApiOptionsBuilder.CreateDefault().WithJsonOptions(customOptions).Build();
+            var options = DevexpApiOptionsBuilder
+                .CreateDefault()
+                .WithJsonOptions(customOptions)
+                .Build();
 
             Assert.That(options.JsonOptions, Is.EqualTo(customOptions));
         }
@@ -97,7 +100,7 @@ namespace DevexpApiSdk.Tests.Common
         [Test]
         public void WithPageSize_ShouldSetDefaultPageSize()
         {
-            var options = ApiOptionsBuilder.CreateDefault().WithPageSize(50).Build();
+            var options = DevexpApiOptionsBuilder.CreateDefault().WithPageSize(50).Build();
 
             Assert.That(options.DefaultPageSize, Is.EqualTo(50));
         }
@@ -105,7 +108,7 @@ namespace DevexpApiSdk.Tests.Common
         [Test]
         public void Builder_ShouldBeImmutable_WhenChained()
         {
-            var builder = ApiOptionsBuilder.CreateDefault();
+            var builder = DevexpApiOptionsBuilder.CreateDefault();
 
             var options1 = builder.WithApiKey("first").Build();
             var options2 = builder.WithApiKey("second").Build();
