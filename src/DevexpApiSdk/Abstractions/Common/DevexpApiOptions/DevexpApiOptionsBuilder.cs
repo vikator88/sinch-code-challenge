@@ -1,31 +1,30 @@
 using System.Text.Json;
-using DevexpApiSdk.Common.DevexpApiSdk.Common;
 using Microsoft.Extensions.Logging;
 
 namespace DevexpApiSdk.Common
 {
-    public class ApiOptionsBuilder
+    public class DevexpApiOptionsBuilder
     {
         private DevexpApiOptions _options = new DevexpApiOptions();
 
-        public static ApiOptionsBuilder CreateDefault()
+        public static DevexpApiOptionsBuilder CreateDefault()
         {
-            return new ApiOptionsBuilder();
+            return new DevexpApiOptionsBuilder();
         }
 
-        public ApiOptionsBuilder WithApiKey(string apiKey)
+        public DevexpApiOptionsBuilder WithApiKey(string apiKey)
         {
             _options = _options with { ApiKey = apiKey };
             return this;
         }
 
-        public ApiOptionsBuilder WithTimeout(TimeSpan timeout)
+        public DevexpApiOptionsBuilder WithTimeout(TimeSpan timeout)
         {
             _options = _options with { Timeout = timeout };
             return this;
         }
 
-        public ApiOptionsBuilder EnableRetries(int maxAttempts = 3, TimeSpan? delay = null)
+        public DevexpApiOptionsBuilder EnableRetries(int maxAttempts = 3, TimeSpan? delay = null)
         {
             _options = _options with
             {
@@ -36,7 +35,7 @@ namespace DevexpApiSdk.Common
             return this;
         }
 
-        public ApiOptionsBuilder EnableBulkOperations(int maxDegreeOfParallelism = 4)
+        public DevexpApiOptionsBuilder EnableBulkOperations(int maxDegreeOfParallelism = 4)
         {
             _options = _options with
             {
@@ -46,19 +45,19 @@ namespace DevexpApiSdk.Common
             return this;
         }
 
-        public ApiOptionsBuilder EnableLogging(ILogger logger)
+        public DevexpApiOptionsBuilder EnableLogging(ILogger logger)
         {
             _options = _options with { EnableLogging = true, Logger = logger };
             return this;
         }
 
-        public ApiOptionsBuilder WithJsonOptions(JsonSerializerOptions options)
+        public DevexpApiOptionsBuilder WithJsonOptions(JsonSerializerOptions options)
         {
             _options = _options with { JsonOptions = options };
             return this;
         }
 
-        public ApiOptionsBuilder WithPageSize(int pageSize)
+        public DevexpApiOptionsBuilder WithPageSize(int pageSize)
         {
             _options = _options with { DefaultPageSize = pageSize };
             return this;
