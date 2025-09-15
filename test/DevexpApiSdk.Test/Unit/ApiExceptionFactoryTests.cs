@@ -85,12 +85,9 @@ namespace MyApiSdk.Tests.Http
 
             var ex = ApiExceptionFactory.Create(response, rawBody);
 
-            Assert.That(ex, Is.TypeOf<ApiValidationException>());
+            Assert.That(ex, Is.TypeOf<ApiException>());
             // el factory mete "unknown validation error" cuando no hay message
-            Assert.That(
-                ((ApiValidationException)ex).ApiMessage,
-                Is.EqualTo("unknown validation error")
-            );
+            Assert.That(ex.ApiMessage, Is.EqualTo("no additional error information"));
         }
 
         [Test]
@@ -99,10 +96,11 @@ namespace MyApiSdk.Tests.Http
             var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             var rawBody = @"<<<NOT_JSON>>>";
 
-            Assert.Throws<System.Text.Json.JsonException>(() =>
-            {
-                ApiExceptionFactory.Create(response, rawBody);
-            });
+            var ex = ApiExceptionFactory.Create(response, rawBody);
+
+            Assert.That(ex, Is.TypeOf<ApiException>());
+            // el factory mete "unexpected error" cuando no hay message
+            Assert.That(ex.ApiMessage, Is.EqualTo("no additional error information"));
         }
     }
 }
