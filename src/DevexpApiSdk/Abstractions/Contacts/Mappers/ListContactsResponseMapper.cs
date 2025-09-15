@@ -8,7 +8,7 @@ namespace DevexpApiSdk.Contacts.Mappers
     {
         internal static IPagedResult<Contact> MapToPagedResult(this ListContactsResponseDto dto)
         {
-            return new PagedResult<Contact>(dto.ContactList, dto.PageNumber, dto.PageSize);
+            return new PagedResult<Contact>(dto.Contacts, dto.PageNumber, dto.PageSize);
         }
     }
 }

@@ -87,33 +87,12 @@ namespace DevexpApiSdk.Messages
             CancellationToken ct = default
         )
         {
-            if (!_options.EnableBulkOperations)
+            var results = new List<Message>();
+            foreach (var c in toContacts)
             {
-                var results = new List<Message>();
-                foreach (var c in toContacts)
-                {
-                    results.Add(await SendMessageAsync(from, messageContent, c, ct));
-                }
-                return results;
+                results.Add(await SendMessageAsync(from, messageContent, c, ct));
             }
-
-            var resultsBag = new ConcurrentBag<Message>();
-
-            await Parallel.ForEachAsync(
-                toContacts,
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = _options.MaxDegreeOfParallelism,
-                    CancellationToken = ct
-                },
-                async (c, token) =>
-                {
-                    var message = await SendMessageAsync(from, messageContent, c);
-                    resultsBag.Add(message);
-                }
-            );
-
-            return resultsBag.ToList();
+            return results;
         }
 
         public async Task<Message> SendMessageAsync(

@@ -1,6 +1,29 @@
-﻿using DevexpApiSdk;
+﻿using DevexpApiSdk.Samples;
 
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            Console.WriteLine("Please specify a sample to run: contacts | messages | bulk");
+            return;
+        }
 
-var client = new DevexpApiClient();
+        var sampleName = args[0].ToLowerInvariant();
+
+        switch (sampleName)
+        {
+            case "contacts":
+                await ContactsManagementSample.RunAsync();
+                break;
+            case "messages":
+                await MessageSenderSample.RunAsync();
+                break;
+
+            default:
+                Console.WriteLine($"Unknown sample '{sampleName}'. Available: contacts | messages");
+                break;
+        }
+    }
+}

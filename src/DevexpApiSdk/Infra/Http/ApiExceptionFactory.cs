@@ -1,5 +1,4 @@
 using System.Net;
-using DevexpApiSdk.Abstractions.Common.ApiResponseDtos;
 using DevexpApiSdk.Common.Exceptions;
 using DevexpApiSdk.Infra.Utils;
 
@@ -9,7 +8,7 @@ namespace DevexpApiSdk.Http
     {
         internal static ApiException Create(HttpResponseMessage response, string rawBody)
         {
-            ErrorResponseDto errorDto = JsonErrorResponseParser.Parse(rawBody);
+            ErrorResponseDto errorDto = ErrorResponseParser.Parse(rawBody);
 
             if (errorDto == null)
                 return new ApiException(

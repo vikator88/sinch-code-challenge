@@ -15,7 +15,7 @@ namespace DevexpApiSdk
 
         public IContactsClient Contacts { get; }
         public IMessagesClient Messages { get; }
-        private const string baseUrl = "https://api.devexp.io/v1";
+        private const string baseUrl = "http://localhost:3000";
 
         public DevexpApiClient(DevexpApiOptions options = null)
         {

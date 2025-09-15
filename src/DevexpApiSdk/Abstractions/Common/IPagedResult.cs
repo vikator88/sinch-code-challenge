@@ -2,8 +2,8 @@ namespace DevexpApiSdk.Common
 {
     public interface IPagedResult<T>
     {
-        int PageSize { get; }
-        int CurrentPage { get; }
-        IReadOnlyList<T> Items { get; }
+        public int PageSize { get; }
+        public int CurrentPage { get; }
+        public IReadOnlyList<T> Items { get; }
     }
 }

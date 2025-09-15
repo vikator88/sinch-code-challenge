@@ -1,5 +1,3 @@
-using DevexpApiSdk.Contacts.Models;
-
 namespace DevexpApiSdk.Messages.Models
 {
     public class CreateMessageRequest

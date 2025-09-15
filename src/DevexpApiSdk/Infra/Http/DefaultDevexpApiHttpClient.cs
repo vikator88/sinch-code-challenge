@@ -1,10 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using DevexpApiSdk.Common;
-using DevexpApiSdk.Common.Exceptions;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Polly;
 
 namespace DevexpApiSdk.Http
@@ -14,6 +13,8 @@ namespace DevexpApiSdk.Http
         private readonly HttpClient _httpClient;
         private readonly DevexpApiOptions _options;
         private readonly AsyncPolicy<HttpResponseMessage> _retryPolicy;
+
+        private readonly JsonSerializerSettings _jsonSettings;
 
         public DefaultDevexpApiHttpClient(string baseUrl, DevexpApiOptions options = null)
         {
@@ -55,6 +56,12 @@ namespace DevexpApiSdk.Http
             {
                 _retryPolicy = Policy.NoOpAsync<HttpResponseMessage>();
             }
+
+            _jsonSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            };
         }
 
         public async Task<DevexpApiResponse<T>> SendAsync<T>(
@@ -64,7 +71,7 @@ namespace DevexpApiSdk.Http
             CancellationToken ct = default
         )
         {
-            var request = RequestBuilder.Build(method, path, body, _options.JsonOptions);
+            var request = RequestBuilder.Build(method, path, body);
 
             // Log before request
             _options.Logger?.LogInformation("HTTP {Method} {Path}", method, path);
@@ -95,7 +102,7 @@ namespace DevexpApiSdk.Http
             T data = default;
             if (!string.IsNullOrWhiteSpace(rawBody))
             {
-                data = JsonSerializer.Deserialize<T>(rawBody, _options.JsonOptions);
+                data = JsonConvert.DeserializeObject<T>(rawBody, _jsonSettings);
             }
 
             return new DevexpApiResponse<T>(data, response.StatusCode, rawBody);
@@ -108,7 +115,7 @@ namespace DevexpApiSdk.Http
             CancellationToken ct = default
         )
         {
-            var request = RequestBuilder.Build(method, path, body, _options.JsonOptions);
+            var request = RequestBuilder.Build(method, path, body);
 
             // Log before request
             _options.Logger?.LogInformation("HTTP {Method} {Path}", method, path);

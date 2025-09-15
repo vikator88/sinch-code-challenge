@@ -31,7 +31,7 @@ namespace DevexpApiSdk.Tests.Contacts
             // Arrange
             var dto = new ListContactsResponseDto
             {
-                ContactList = new List<Contact>
+                Contacts = new List<Contact>
                 {
                     new Contact
                     {
@@ -58,7 +58,7 @@ namespace DevexpApiSdk.Tests.Contacts
                 );
 
             // Act
-            var result = await _sut.GetContactsAsync(); // pageNumber = 1 by default, pageSize = 10 by default
+            var result = await _sut.GetContactsAsync(); // pageNumber = 1 by default, pageSize = 20 by default
 
             // Assert
             Assert.That(result.Items, Has.Count.EqualTo(1));

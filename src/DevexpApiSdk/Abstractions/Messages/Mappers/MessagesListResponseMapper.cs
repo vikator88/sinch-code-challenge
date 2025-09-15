@@ -15,8 +15,8 @@ namespace DevexpApiSdk.Messages.Mappers
                 {
                     Id = m.Id,
                     From = m.From,
-                    ToContactId = m.To,
-                    To = dto.Data.Contacts.TryGetValue(m.To, out var contactDto)
+                    To = m.To,
+                    ToContact = dto.Data.Contacts.TryGetValue(m.To, out var contactDto)
                         ? new Contact { Name = contactDto.Name, Phone = contactDto.Phone }
                         : null,
                     Content = m.Content,

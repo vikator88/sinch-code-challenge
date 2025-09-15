@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 using DevexpApiSdk.Common;
+using DevexpApiSdk.Common.Exceptions;
 using DevexpApiSdk.Common.Metrics;
+using DevexpApiSdk.Common.Validation;
 using DevexpApiSdk.Contacts.ApiResponseDtos;
 using DevexpApiSdk.Contacts.Mappers;
 using DevexpApiSdk.Contacts.Models;
@@ -34,6 +36,10 @@ namespace DevexpApiSdk.Contacts
             CancellationToken ct = default
         )
         {
+            // Check if phone is E.164 format
+            if (!PhoneNumberValidator.IsValidE164(phone))
+                throw new InvalidPhoneNumberException(phone);
+
             // Wrap the operation with metrics collection
             return await OperationExecutor.ExecuteAsync<Contact>(
                 "Contacts.AddContact",
@@ -64,33 +70,12 @@ namespace DevexpApiSdk.Contacts
                 "Contacts.BulkAddContacts",
                 async () =>
                 {
-                    if (!_options.EnableBulkOperations)
+                    var results = new List<Contact>();
+                    foreach (var c in contacts)
                     {
-                        var results = new List<Contact>();
-                        foreach (var c in contacts)
-                        {
-                            results.Add(await AddContactAsync(c.Name, c.Phone, ct));
-                        }
-                        return results;
+                        results.Add(await AddContactAsync(c.Name, c.Phone, ct));
                     }
-
-                    var resultsBag = new ConcurrentBag<Contact>();
-
-                    await Parallel.ForEachAsync(
-                        contacts,
-                        new ParallelOptions
-                        {
-                            MaxDegreeOfParallelism = _options.MaxDegreeOfParallelism,
-                            CancellationToken = ct
-                        },
-                        async (c, token) =>
-                        {
-                            var contact = await AddContactAsync(c.Name, c.Phone, token);
-                            resultsBag.Add(contact);
-                        }
-                    );
-
-                    return resultsBag.ToList();
+                    return results;
                 },
                 _options
             );
@@ -111,26 +96,10 @@ namespace DevexpApiSdk.Contacts
             CancellationToken ct = default
         )
         {
-            if (!_options.EnableBulkOperations)
+            foreach (var c in contactIds)
             {
-                foreach (var c in contactIds)
-                {
-                    await DeleteContactAsync(c, ct);
-                }
+                await DeleteContactAsync(c, ct);
             }
-
-            await Parallel.ForEachAsync(
-                contactIds,
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = _options.MaxDegreeOfParallelism,
-                    CancellationToken = ct
-                },
-                async (c, token) =>
-                {
-                    await DeleteContactAsync(c, token);
-                }
-            );
         }
 
         public Task DeleteContactsAsync(
@@ -143,15 +112,7 @@ namespace DevexpApiSdk.Contacts
 
         public async Task<IPagedResult<Contact>> GetContactsAsync(
             int pageNumber = 1,
-            CancellationToken ct = default
-        )
-        {
-            return await GetContactsAsync(pageNumber, _options.DefaultPageSize, ct);
-        }
-
-        public async Task<IPagedResult<Contact>> GetContactsAsync(
-            int pageNumber,
-            int pageSize,
+            int pageSize = 20,
             CancellationToken ct = default
         )
         {
@@ -180,16 +141,19 @@ namespace DevexpApiSdk.Contacts
         }
 
         public async Task<Contact> UpdateContactAsync(
-            Guid contactId,
-            string contactName,
-            string contactPhone,
+            Guid id,
+            string name,
+            string phone,
             CancellationToken ct = default
         )
         {
-            var body = new { contactName, contactPhone };
+            // Check if phone is E.164 format
+            if (!PhoneNumberValidator.IsValidE164(phone))
+                throw new InvalidPhoneNumberException(phone);
+            var body = new { name, phone };
             var response = await _http.SendAsync<Contact>(
                 HttpMethod.Patch,
-                $"{_resourcePath}/{contactId}",
+                $"{_resourcePath}/{id}",
                 body,
                 ct
             );
@@ -215,33 +179,12 @@ namespace DevexpApiSdk.Contacts
             CancellationToken ct = default
         )
         {
-            if (!_options.EnableBulkOperations)
+            var results = new List<Contact>();
+            foreach (var c in updateContactRequests)
             {
-                var results = new List<Contact>();
-                foreach (var c in updateContactRequests)
-                {
-                    results.Add(await UpdateContactAsync(c, ct));
-                }
-                return results;
+                results.Add(await UpdateContactAsync(c, ct));
             }
-
-            var resultsBag = new ConcurrentBag<Contact>();
-
-            await Parallel.ForEachAsync(
-                updateContactRequests,
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = _options.MaxDegreeOfParallelism,
-                    CancellationToken = ct
-                },
-                async (c, token) =>
-                {
-                    var contact = await UpdateContactAsync(c, token);
-                    resultsBag.Add(contact);
-                }
-            );
-
-            return resultsBag.ToList();
+            return results;
         }
     }
 }

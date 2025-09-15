@@ -1,10 +1,6 @@
-namespace DevexpApiSdk.Abstractions.Common.ApiResponseDtos
+internal class ErrorResponseDto
 {
-    internal class ErrorResponseDto
-    {
-        //internal ErrorResponseDto() { }
-
-        internal string Message { get; set; }
-        internal string Id { get; set; }
-    }
+    public string Message { get; set; }
+    public string Id { get; set; }
+    public string Error { get; set; }
 }

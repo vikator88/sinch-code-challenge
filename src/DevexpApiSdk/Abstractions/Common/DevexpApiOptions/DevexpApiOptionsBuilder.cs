@@ -1,4 +1,3 @@
-using System.Text.Json;
 using DevexpApiSdk.Common.Exceptions;
 using DevexpApiSdk.Common.Metrics;
 using Microsoft.Extensions.Logging;
@@ -37,16 +36,6 @@ namespace DevexpApiSdk.Common
             return this;
         }
 
-        public DevexpApiOptionsBuilder EnableBulkOperations(int maxDegreeOfParallelism = 4)
-        {
-            _options = _options with
-            {
-                EnableBulkOperations = true,
-                MaxDegreeOfParallelism = maxDegreeOfParallelism
-            };
-            return this;
-        }
-
         public DevexpApiOptionsBuilder EnableLogging(ILogger logger)
         {
             _options = _options with { EnableLogging = true, Logger = logger };
@@ -59,12 +48,6 @@ namespace DevexpApiSdk.Common
         {
             _options = _options with { EnableMetrics = true };
             _options = _options with { OnOperationCompleted = hook };
-            return this;
-        }
-
-        public DevexpApiOptionsBuilder WithJsonOptions(JsonSerializerOptions options)
-        {
-            _options = _options with { JsonOptions = options };
             return this;
         }
 

@@ -6,12 +6,8 @@ namespace DevexpApiSdk.Contacts
     public interface IContactsClient
     {
         Task<IPagedResult<Contact>> GetContactsAsync(
-            int pageNumber,
-            int pageSize,
-            CancellationToken ct = default
-        );
-        Task<IPagedResult<Contact>> GetContactsAsync(
-            int pageNumber,
+            int pageNumber = 1,
+            int pageSize = 20,
             CancellationToken ct = default
         );
         Task<Contact> GetContactByIdAsync(Guid contactId, CancellationToken ct = default);

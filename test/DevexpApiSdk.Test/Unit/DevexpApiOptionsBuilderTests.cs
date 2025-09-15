@@ -1,5 +1,5 @@
-using System.Text.Json;
 using DevexpApiSdk.Common;
+using DevexpApiSdk.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace DevexpApiSdk.Tests.Common
@@ -10,9 +10,11 @@ namespace DevexpApiSdk.Tests.Common
         [Test]
         public void Build_DefaultOptions_ShouldMatchExpectedDefaults()
         {
-            var options = DevexpApiOptionsBuilder.CreateDefault().Build();
+            var options = DevexpApiOptionsBuilder
+                .CreateDefault()
+                .WithApiKey("api-key") // To avoid exception on missing API key
+                .Build();
 
-            Assert.That(options.ApiKey, Is.EqualTo(string.Empty));
             Assert.That(options.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
             Assert.That(options.EnableAutoRetries, Is.True);
             Assert.That(options.MaxRetryAttempts, Is.EqualTo(3));
@@ -20,14 +22,9 @@ namespace DevexpApiSdk.Tests.Common
                 options.RetryDelayInMilliseconds,
                 Is.EqualTo(TimeSpan.FromMilliseconds(2000))
             );
-            Assert.That(options.EnableBulkOperations, Is.False);
-            Assert.That(options.MaxDegreeOfParallelism, Is.EqualTo(4));
             Assert.That(options.EnableLogging, Is.False);
             Assert.That(options.Logger, Is.Null);
-            Assert.That(
-                options.JsonOptions.PropertyNamingPolicy,
-                Is.EqualTo(JsonNamingPolicy.CamelCase)
-            );
+
             Assert.That(options.DefaultPageSize, Is.EqualTo(20));
         }
 
@@ -40,11 +37,25 @@ namespace DevexpApiSdk.Tests.Common
         }
 
         [Test]
+        public void Build_WithoutApiKey_ShouldThrowException()
+        {
+            var builder = DevexpApiOptionsBuilder.CreateDefault();
+            // Not setting API key to simulate missing key
+
+            var ex = Assert.Throws<ApiKeyMissingException>(() => builder.Build());
+            Assert.That(ex.Message, Contains.Substring("No API key was provided."));
+        }
+
+        [Test]
         public void WithTimeout_ShouldSetTimeout()
         {
             var timeout = TimeSpan.FromSeconds(10);
 
-            var options = DevexpApiOptionsBuilder.CreateDefault().WithTimeout(timeout).Build();
+            var options = DevexpApiOptionsBuilder
+                .CreateDefault()
+                .WithApiKey("api-key") // To avoid exception on missing API key
+                .WithTimeout(timeout)
+                .Build();
 
             Assert.That(options.Timeout, Is.EqualTo(timeout));
         }
@@ -56,6 +67,7 @@ namespace DevexpApiSdk.Tests.Common
 
             var options = DevexpApiOptionsBuilder
                 .CreateDefault()
+                .WithApiKey("api-key") // To avoid exception on missing API key
                 .EnableRetries(maxAttempts: 5, delay: delay)
                 .Build();
 
@@ -65,42 +77,28 @@ namespace DevexpApiSdk.Tests.Common
         }
 
         [Test]
-        public void EnableBulkOperations_ShouldEnableBulkOperationsAndSetDegree()
-        {
-            var options = DevexpApiOptionsBuilder.CreateDefault().EnableBulkOperations(8).Build();
-
-            Assert.That(options.EnableBulkOperations, Is.True);
-            Assert.That(options.MaxDegreeOfParallelism, Is.EqualTo(8));
-        }
-
-        [Test]
         public void EnableLogging_ShouldEnableLoggingAndAssignLogger()
         {
             var fakeLogger = new FakeLogger();
 
-            var options = DevexpApiOptionsBuilder.CreateDefault().EnableLogging(fakeLogger).Build();
+            var options = DevexpApiOptionsBuilder
+                .CreateDefault()
+                .WithApiKey("api-key") // To avoid exception on missing API key
+                .EnableLogging(fakeLogger)
+                .Build();
 
             Assert.That(options.EnableLogging, Is.True);
             Assert.That(options.Logger, Is.EqualTo(fakeLogger));
         }
 
         [Test]
-        public void WithJsonOptions_ShouldReplaceJsonOptions()
-        {
-            var customOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
-
-            var options = DevexpApiOptionsBuilder
-                .CreateDefault()
-                .WithJsonOptions(customOptions)
-                .Build();
-
-            Assert.That(options.JsonOptions, Is.EqualTo(customOptions));
-        }
-
-        [Test]
         public void WithPageSize_ShouldSetDefaultPageSize()
         {
-            var options = DevexpApiOptionsBuilder.CreateDefault().WithPageSize(50).Build();
+            var options = DevexpApiOptionsBuilder
+                .CreateDefault()
+                .WithApiKey("api-key") // To avoid exception on missing API key
+                .WithPageSize(50)
+                .Build();
 
             Assert.That(options.DefaultPageSize, Is.EqualTo(50));
         }

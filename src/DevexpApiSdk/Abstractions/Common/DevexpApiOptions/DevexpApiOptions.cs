@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using DevexpApiSdk.Common.Metrics;
 using Microsoft.Extensions.Logging;
 
@@ -20,10 +18,6 @@ namespace DevexpApiSdk.Common
         public int MaxRetryAttempts { get; init; } = 3;
         public TimeSpan RetryDelayInMilliseconds { get; init; } = TimeSpan.FromMilliseconds(2000);
 
-        // Bulk Ops
-        public bool EnableBulkOperations { get; init; } = false;
-        public int MaxDegreeOfParallelism { get; init; } = 4;
-
         // Logging
         public bool EnableLogging { get; init; } = false;
         public ILogger Logger { get; init; }
@@ -31,14 +25,6 @@ namespace DevexpApiSdk.Common
         // Metrics
         public bool EnableMetrics { get; init; } = false;
         public Action<OperationPerformanceMetric> OnOperationCompleted { get; init; }
-
-        // Serialization
-        public JsonSerializerOptions JsonOptions { get; init; } =
-            new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-            };
 
         // Paging
         public int DefaultPageSize { get; init; } = 20;
