@@ -1,5 +1,6 @@
 using System.Net;
 using DevexpApiSdk.Common;
+using DevexpApiSdk.Common.Metrics;
 using DevexpApiSdk.Contacts;
 using DevexpApiSdk.Contacts.ApiResponseDtos;
 using DevexpApiSdk.Contacts.Models;
@@ -129,6 +130,50 @@ namespace DevexpApiSdk.Tests.Contacts
                     ),
                 Times.Once
             );
+        }
+
+        [Test]
+        public async Task AddContactAsync_ShouldCaptureProfilingMetric_WhenMetricsEnabled()
+        {
+            // Arrange
+            OperationPerformanceMetric capturedMetric = null;
+
+            var options = DevexpApiOptionsBuilder
+                .CreateDefault()
+                .WithApiKey("there-is-no-key")
+                .WithOperationProfiler(m => capturedMetric = m)
+                .Build();
+
+            var newContact = new Contact
+            {
+                Id = Guid.NewGuid(),
+                Name = "Victor",
+                Phone = "+34666555444"
+            };
+
+            _httpMock
+                .Setup(h =>
+                    h.SendAsync<Contact>(
+                        HttpMethod.Post,
+                        "/contacts",
+                        It.IsAny<object>(),
+                        It.IsAny<CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new DevexpApiResponse<Contact>(newContact, HttpStatusCode.Created, "{}")
+                );
+
+            var client = new ContactsClient(_httpMock.Object, options);
+
+            // Act
+            await client.AddContactAsync("Victor", "+34666555444");
+
+            // Assert
+
+            Assert.That(capturedMetric, Is.Not.Null);
+            Assert.That(capturedMetric!.OperationName, Is.EqualTo("Contacts.AddContact"));
+            Assert.That(capturedMetric!.Success, Is.True);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using DevexpApiSdk.Common;
+using DevexpApiSdk.Common.Metrics;
 using DevexpApiSdk.Contacts.ApiResponseDtos;
 using DevexpApiSdk.Contacts.Mappers;
 using DevexpApiSdk.Contacts.Models;
@@ -33,10 +34,23 @@ namespace DevexpApiSdk.Contacts
             CancellationToken ct = default
         )
         {
-            var body = new { name, phone };
-            var response = await _http.SendAsync<Contact>(HttpMethod.Post, _resourcePath, body, ct);
+            // Wrap the operation with metrics collection
+            return await OperationExecutor.ExecuteAsync<Contact>(
+                "Contacts.AddContact",
+                async () =>
+                {
+                    var body = new { name, phone };
+                    var response = await _http.SendAsync<Contact>(
+                        HttpMethod.Post,
+                        _resourcePath,
+                        body,
+                        ct
+                    );
 
-            return response.Data!;
+                    return response.Data!;
+                },
+                _options
+            );
         }
 
         public async Task<IReadOnlyList<Contact>> AddContactsAsync(
@@ -44,33 +58,42 @@ namespace DevexpApiSdk.Contacts
             CancellationToken ct = default
         )
         {
-            if (!_options.EnableBulkOperations)
-            {
-                var results = new List<Contact>();
-                foreach (var c in contacts)
+            // Wrap the operation with metrics collection
+            // Added only in some methods to show how it can be done
+            return await OperationExecutor.ExecuteAsync<IReadOnlyList<Contact>>(
+                "Contacts.BulkAddContacts",
+                async () =>
                 {
-                    results.Add(await AddContactAsync(c.Name, c.Phone, ct));
-                }
-                return results;
-            }
+                    if (!_options.EnableBulkOperations)
+                    {
+                        var results = new List<Contact>();
+                        foreach (var c in contacts)
+                        {
+                            results.Add(await AddContactAsync(c.Name, c.Phone, ct));
+                        }
+                        return results;
+                    }
 
-            var resultsBag = new ConcurrentBag<Contact>();
+                    var resultsBag = new ConcurrentBag<Contact>();
 
-            await Parallel.ForEachAsync(
-                contacts,
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = _options.MaxDegreeOfParallelism,
-                    CancellationToken = ct
+                    await Parallel.ForEachAsync(
+                        contacts,
+                        new ParallelOptions
+                        {
+                            MaxDegreeOfParallelism = _options.MaxDegreeOfParallelism,
+                            CancellationToken = ct
+                        },
+                        async (c, token) =>
+                        {
+                            var contact = await AddContactAsync(c.Name, c.Phone, token);
+                            resultsBag.Add(contact);
+                        }
+                    );
+
+                    return resultsBag.ToList();
                 },
-                async (c, token) =>
-                {
-                    var contact = await AddContactAsync(c.Name, c.Phone, token);
-                    resultsBag.Add(contact);
-                }
+                _options
             );
-
-            return resultsBag.ToList();
         }
 
         public async Task DeleteContactAsync(Guid contactId, CancellationToken ct = default)

@@ -1,32 +1,28 @@
 using System.Diagnostics;
-using System.Reflection;
 
 namespace DevexpApiSdk.Common.Metrics
 {
-    internal class ProfilingProxy<T> : DispatchProxy
-        where T : class
+    internal static class OperationExecutor
     {
-        internal T Inner { get; set; } = default!;
-        internal DevexpApiOptions Options { get; set; } = default!;
-
-        protected override object Invoke(MethodInfo targetMethod, object[] args)
+        internal static async Task<T> ExecuteAsync<T>(
+            string operationName,
+            Func<Task<T>> action,
+            DevexpApiOptions options,
+            int? itemCount = null
+        )
         {
             var sw = Stopwatch.StartNew();
             try
             {
-                var result = targetMethod!.Invoke(Inner, args!);
-
-                if (result is Task task)
-                {
-                    return InterceptTask(task, targetMethod.Name, sw);
-                }
-
+                var result = await action();
                 sw.Stop();
-                Options.OnOperationCompleted?.Invoke(
+
+                options.OnOperationCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
-                        OperationName = $"{typeof(T).Name}.{targetMethod.Name}",
+                        OperationName = operationName,
                         Duration = sw.Elapsed,
+                        ItemCount = itemCount,
                         Success = true
                     }
                 );
@@ -36,31 +32,39 @@ namespace DevexpApiSdk.Common.Metrics
             catch (Exception ex)
             {
                 sw.Stop();
-                Options.OnOperationCompleted?.Invoke(
+                options.OnOperationCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
-                        OperationName = $"{typeof(T).Name}.{targetMethod!.Name}",
+                        OperationName = operationName,
                         Duration = sw.Elapsed,
+                        ItemCount = itemCount,
                         Success = false,
                         Exception = ex
                     }
                 );
-
                 throw;
             }
         }
 
-        private async Task InterceptTask(Task task, string opName, Stopwatch sw)
+        internal static async Task ExecuteAsync(
+            string operationName,
+            Func<Task> action,
+            DevexpApiOptions options,
+            int? itemCount = null
+        )
         {
+            var sw = Stopwatch.StartNew();
             try
             {
-                await task;
+                await action();
                 sw.Stop();
-                Options.OnOperationCompleted?.Invoke(
+
+                options.OnOperationCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
-                        OperationName = $"{typeof(T).Name}.{opName}",
+                        OperationName = operationName,
                         Duration = sw.Elapsed,
+                        ItemCount = itemCount,
                         Success = true
                     }
                 );
@@ -68,16 +72,16 @@ namespace DevexpApiSdk.Common.Metrics
             catch (Exception ex)
             {
                 sw.Stop();
-                Options.OnOperationCompleted?.Invoke(
+                options.OnOperationCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
-                        OperationName = $"{typeof(T).Name}.{opName}",
+                        OperationName = operationName,
                         Duration = sw.Elapsed,
+                        ItemCount = itemCount,
                         Success = false,
                         Exception = ex
                     }
                 );
-
                 throw;
             }
         }
