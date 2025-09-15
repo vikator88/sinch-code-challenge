@@ -4,16 +4,11 @@ namespace DevexpApiSdk.Common.Exceptions
 {
     public class ApiValidationException : ApiException
     {
-        public IReadOnlyDictionary<string, string[]> Errors { get; }
-
         public ApiValidationException(
             string message,
-            IReadOnlyDictionary<string, string[]> errors,
-            string responseBody = null
+            string responseBody = null,
+            string apiMessage = null
         )
-            : base(HttpStatusCode.BadRequest, message, responseBody)
-        {
-            Errors = errors;
-        }
+            : base(HttpStatusCode.BadRequest, message, responseBody, apiMessage) { }
     }
 }

@@ -1,31 +1,53 @@
 using System.Net;
+using System.Text.Json;
+using DevexpApiSdk.Abstractions.Common.ApiResponseDtos;
 using DevexpApiSdk.Common.Exceptions;
 
 namespace DevexpApiSdk.Http
 {
     internal static class ApiExceptionFactory
     {
-        public static ApiException Create(HttpResponseMessage response, string rawBody)
+        internal static ApiException Create(HttpResponseMessage response, string rawBody)
         {
+            ErrorResponseDto errorDto = JsonSerializer.Deserialize<ErrorResponseDto>(rawBody);
+
             switch (response.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
                     return new ApiValidationException(
                         "Validation error",
-                        new Dictionary<string, string[]>(),
-                        rawBody
+                        rawBody,
+                        errorDto?.Message ?? "unknown validation error"
                     );
 
                 case HttpStatusCode.Unauthorized:
                 case HttpStatusCode.Forbidden:
-                    return new ApiAuthException("Authentication/authorization failed", rawBody);
+                    return new ApiAuthException(
+                        "Authentication/authorization failed",
+                        rawBody,
+                        errorDto?.Message ?? "unauthorized"
+                    );
 
                 case HttpStatusCode.NotFound:
-                    return new ApiNotFoundException("Resource not found", rawBody);
+                    return new ApiNotFoundException(
+                        "Resource not found",
+                        rawBody,
+                        errorDto?.Id ?? "unknown",
+                        errorDto?.Message ?? "resource not found"
+                    );
                 default:
                     if ((int)response.StatusCode >= 500)
-                        return new ApiServerException(response.StatusCode, rawBody);
-                    return new ApiException(response.StatusCode, "Unexpected API error", rawBody);
+                        return new ApiServerException(
+                            response.StatusCode,
+                            rawBody,
+                            errorDto?.Message ?? "unknown server error"
+                        );
+                    return new ApiException(
+                        response.StatusCode,
+                        "Unexpected API error",
+                        rawBody,
+                        errorDto?.Message ?? "unexpected error"
+                    );
             }
         }
     }

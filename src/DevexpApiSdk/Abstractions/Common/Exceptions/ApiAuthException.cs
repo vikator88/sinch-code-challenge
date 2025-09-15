@@ -4,7 +4,11 @@ namespace DevexpApiSdk.Common.Exceptions
 {
     public class ApiAuthException : ApiException
     {
-        public ApiAuthException(string message, string responseBody = null)
-            : base(HttpStatusCode.Unauthorized, message, responseBody) { }
+        public ApiAuthException(
+            string message,
+            string responseBody = null,
+            string apiMessage = null
+        )
+            : base(HttpStatusCode.Unauthorized, message, responseBody, apiMessage) { }
     }
 }

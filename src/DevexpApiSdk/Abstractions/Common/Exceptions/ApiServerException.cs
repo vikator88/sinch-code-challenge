@@ -4,7 +4,16 @@ namespace DevexpApiSdk.Common.Exceptions
 {
     public class ApiServerException : ApiException
     {
-        public ApiServerException(HttpStatusCode statusCode, string responseBody = null)
-            : base(statusCode, $"Server error: {(int)statusCode} {statusCode}", responseBody) { }
+        public ApiServerException(
+            HttpStatusCode statusCode,
+            string responseBody = null,
+            string apiMessage = null
+        )
+            : base(
+                statusCode,
+                $"Server error: {(int)statusCode} {statusCode}",
+                responseBody,
+                apiMessage
+            ) { }
     }
 }
