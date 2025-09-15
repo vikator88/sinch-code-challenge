@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DevexpApiSdk.Common.Metrics;
 using Microsoft.Extensions.Logging;
 
 namespace DevexpApiSdk.Common
@@ -26,6 +27,9 @@ namespace DevexpApiSdk.Common
         // Logging
         public bool EnableLogging { get; init; } = false;
         public ILogger Logger { get; init; }
+
+        // Metrics
+        public Action<OperationPerformanceMetric> OnOperationCompleted { get; init; }
 
         // Serialization
         public JsonSerializerOptions JsonOptions { get; init; } =

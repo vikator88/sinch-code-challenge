@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DevexpApiSdk.Common.Metrics;
 using Microsoft.Extensions.Logging;
 
 namespace DevexpApiSdk.Common
@@ -48,6 +49,14 @@ namespace DevexpApiSdk.Common
         public DevexpApiOptionsBuilder EnableLogging(ILogger logger)
         {
             _options = _options with { EnableLogging = true, Logger = logger };
+            return this;
+        }
+
+        public DevexpApiOptionsBuilder WithOperationProfiler(
+            Action<OperationPerformanceMetric> hook
+        )
+        {
+            _options = _options with { OnOperationCompleted = hook };
             return this;
         }
 
