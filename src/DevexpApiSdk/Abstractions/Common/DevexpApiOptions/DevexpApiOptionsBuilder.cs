@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DevexpApiSdk.Common.Exceptions;
 using DevexpApiSdk.Common.Metrics;
 using Microsoft.Extensions.Logging;
 
@@ -75,6 +76,10 @@ namespace DevexpApiSdk.Common
 
         public DevexpApiOptions Build()
         {
+            if (string.IsNullOrWhiteSpace(_options.ApiKey))
+            {
+                throw new ApiKeyMissingException();
+            }
             return _options;
         }
     }

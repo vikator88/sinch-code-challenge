@@ -29,6 +29,9 @@ namespace DevexpApiSdk
             Messages = new MessagesClient(_http, _options);
         }
 
+        public DevexpApiClient(string apiKey)
+            : this(new DevexpApiOptionsBuilder().WithApiKey(apiKey).Build()) { }
+
         public void Dispose()
         {
             _http.Dispose();
