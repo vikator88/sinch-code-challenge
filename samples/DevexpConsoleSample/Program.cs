@@ -1,29 +1,47 @@
 ﻿using DevexpApiSdk.Samples;
 
-class Program
+var cts = new CancellationTokenSource();
+
+// Cancel on Ctrl+C or SIGTERM
+Console.CancelKeyPress += (sender, e) =>
 {
-    static async Task Main(string[] args)
-    {
-        if (args.Length == 0)
-        {
-            Console.WriteLine("Please specify a sample to run: contacts | messages | bulk");
-            return;
-        }
+    e.Cancel = true; // prevent immediate process termination
+    cts.Cancel();
+};
 
-        var sampleName = args[0].ToLowerInvariant();
+AppDomain.CurrentDomain.ProcessExit += (sender, e) => cts.Cancel();
 
-        switch (sampleName)
-        {
-            case "contacts":
-                await ContactsManagementSample.RunAsync();
-                break;
-            case "messages":
-                await MessageSenderSample.RunAsync();
-                break;
+var cancellationToken = cts.Token;
 
-            default:
-                Console.WriteLine($"Unknown sample '{sampleName}'. Available: contacts | messages");
-                break;
-        }
-    }
+if (args.Length == 0)
+{
+    Console.WriteLine(
+        "Please specify a sample to run: contacts | multi-contacts | logger | profiler | messages"
+    );
+    return;
+}
+
+var sampleName = args[0].ToLowerInvariant();
+
+switch (sampleName)
+{
+    case "contacts":
+        await ContactCrudSample.RunAsync(cancellationToken);
+        break;
+    case "multi-contacts":
+        await ContactCrudMultiSample.RunAsync(cancellationToken);
+        break;
+    case "messages":
+        await MessageSample.RunAsync(cancellationToken);
+        break;
+    case "logger":
+        await WithLoggerSample.RunAsync();
+        break;
+    case "profiler":
+        await WithLoggerProfilerSample.RunAsync();
+        break;
+
+    default:
+        Console.WriteLine($"Unknown sample '{sampleName}'. Available: contacts | messages");
+        break;
 }
