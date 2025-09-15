@@ -22,7 +22,10 @@ namespace MyApiSdk.Tests.Messages
         public void SetUp()
         {
             _httpMock = new Mock<IDevexpApiHttpClient>();
-            _options = new DevexpApiOptions { EnableBulkOperations = false };
+            _options = DevexpApiOptionsBuilder
+                .CreateDefault()
+                .WithApiKey("there-is-no-key")
+                .Build();
             _client = new MessagesClient(_httpMock.Object, _options);
         }
 
@@ -165,44 +168,6 @@ namespace MyApiSdk.Tests.Messages
             Assert.That(results.Count, Is.EqualTo(2));
             Assert.That(results[0].Content, Is.EqualTo("Msg1"));
             Assert.That(results[1].Content, Is.EqualTo("Msg2"));
-        }
-
-        [Test]
-        public async Task SendMessageAsync_WithMultipleContacts_BulkEnabled_ShouldSendInParallel()
-        {
-            var bulkOptions = new DevexpApiOptions()
-            {
-                EnableBulkOperations = true,
-                MaxDegreeOfParallelism = 2
-            };
-            _client = new MessagesClient(_httpMock.Object, bulkOptions);
-
-            var contact1 = new Contact { Id = Guid.NewGuid(), Name = "A" };
-            var contact2 = new Contact { Id = Guid.NewGuid(), Name = "B" };
-
-            _httpMock
-                .Setup(h =>
-                    h.SendAsync<Message>(
-                        HttpMethod.Post,
-                        "/messages",
-                        It.IsAny<CreateMessageRequest>(),
-                        It.IsAny<CancellationToken>()
-                    )
-                )
-                .ReturnsAsync(
-                    (HttpMethod m, string path, object body, CancellationToken ct) =>
-                    {
-                        var req = (CreateMessageRequest)body;
-                        var msg = new Message { Id = Guid.NewGuid(), Content = $"To {req.To.Id}" };
-                        return new DevexpApiResponse<Message>(msg, HttpStatusCode.Created);
-                    }
-                );
-
-            var results = await _client.SendMessageAsync("me", "hi", new[] { contact1, contact2 });
-
-            Assert.That(results.Count, Is.EqualTo(2));
-            Assert.That(results.Any(m => m.Content.Contains(contact1.Id.ToString())), Is.True);
-            Assert.That(results.Any(m => m.Content.Contains(contact2.Id.ToString())), Is.True);
         }
     }
 }

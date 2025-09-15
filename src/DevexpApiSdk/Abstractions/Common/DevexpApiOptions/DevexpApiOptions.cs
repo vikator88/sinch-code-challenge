@@ -7,6 +7,9 @@ namespace DevexpApiSdk.Common
     {
         internal DevexpApiOptions() { }
 
+        // Base URL
+        public string BaseUrl { get; init; } = "http://localhost:3000";
+
         // Auth
         public string ApiKey { get; init; } = string.Empty;
 

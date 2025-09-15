@@ -16,12 +16,12 @@ namespace DevexpApiSdk.Http
 
         private readonly JsonSerializerSettings _jsonSettings;
 
-        public DefaultDevexpApiHttpClient(string baseUrl, DevexpApiOptions options = null)
+        public DefaultDevexpApiHttpClient(DevexpApiOptions options = null)
         {
             _options = options ?? DevexpApiOptionsBuilder.CreateDefault().Build();
 
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(baseUrl);
+            _httpClient.BaseAddress = new Uri(_options.BaseUrl);
             _httpClient.Timeout = _options.Timeout;
 
             // Always attach bearer token

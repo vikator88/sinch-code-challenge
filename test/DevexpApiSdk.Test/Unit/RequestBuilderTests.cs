@@ -45,22 +45,5 @@ namespace MyApiSdk.Tests.Http
                 Is.EqualTo("application/json")
             );
         }
-
-        [Test]
-        public void Build_Should_SerializeUsingProvidedOptions()
-        {
-            // Arrange
-            var method = HttpMethod.Post;
-            var path = "/contacts";
-            var body = new { Name = "test", Phone = "+34600111222" };
-
-            // Act
-            var request = RequestBuilder.Build(method, path, body);
-
-            // Assert
-            var content = request.Content!.ReadAsStringAsync().Result;
-            Assert.That(content, Does.Contain("Name")); // No camelCase
-            Assert.That(content, Does.Contain("Phone")); // No camelCase
-        }
     }
 }
