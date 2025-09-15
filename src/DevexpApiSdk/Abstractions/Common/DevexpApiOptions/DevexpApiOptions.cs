@@ -29,6 +29,7 @@ namespace DevexpApiSdk.Common
         public ILogger Logger { get; init; }
 
         // Metrics
+        public bool EnableMetrics { get; init; } = false;
         public Action<OperationPerformanceMetric> OnOperationCompleted { get; init; }
 
         // Serialization

@@ -56,6 +56,7 @@ namespace DevexpApiSdk.Common
             Action<OperationPerformanceMetric> hook
         )
         {
+            _options = _options with { EnableMetrics = true };
             _options = _options with { OnOperationCompleted = hook };
             return this;
         }
