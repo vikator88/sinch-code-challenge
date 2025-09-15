@@ -1,5 +1,7 @@
 namespace DevexpApiSdk.Messages.ApiResponseDtos
 {
+    // This set of classes are internal because they're only used for deserialization within the SDK and not exposed to consumers.
+    // Properties are public to allow set them during deserialization.
     internal class GetMessagesResponseDto
     {
         public List<MessageDto> Messages { get; set; } = new();

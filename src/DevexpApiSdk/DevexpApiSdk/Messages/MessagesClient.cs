@@ -8,6 +8,7 @@ using DevexpApiSdk.Messages.Models;
 
 namespace DevexpApiSdk.Messages
 {
+    /// <inheritdoc/>
     internal class MessagesClient : IMessagesClient
     {
         private readonly IDevexpApiHttpClient _http;
@@ -20,6 +21,7 @@ namespace DevexpApiSdk.Messages
             _options = options;
         }
 
+        /// <inheritdoc/>
         public async Task<IPagedResult<Message>> GetMessagesAsync(CancellationToken ct = default)
         {
             var response = await _http.SendAsync<GetMessagesResponseDto>(
@@ -32,6 +34,7 @@ namespace DevexpApiSdk.Messages
             return MessagesListResponseMapper.MapToPagedResult(response.Data!);
         }
 
+        /// <inheritdoc/>
         public async Task<Message> GetMessageByIdAsync(
             Guid messageId,
             CancellationToken ct = default
@@ -46,6 +49,7 @@ namespace DevexpApiSdk.Messages
             return response.Data!;
         }
 
+        /// <inheritdoc/>
         public async Task<Message> SendMessageAsync(
             string from,
             string messageContent,
@@ -63,6 +67,7 @@ namespace DevexpApiSdk.Messages
             return await SendMessageAsync(createMessageRequest, ct);
         }
 
+        /// <inheritdoc/>
         public async Task<Message> SendMessageAsync(
             string from,
             string messageContent,
@@ -80,6 +85,7 @@ namespace DevexpApiSdk.Messages
             return await SendMessageAsync(createMessageRequest, ct);
         }
 
+        /// <inheritdoc/>
         public async Task<IReadOnlyList<Message>> SendMessageAsync(
             string from,
             string messageContent,
@@ -95,6 +101,7 @@ namespace DevexpApiSdk.Messages
             return results;
         }
 
+        /// <inheritdoc/>
         public async Task<Message> SendMessageAsync(
             CreateMessageRequest createMessageRequest,
             CancellationToken ct = default

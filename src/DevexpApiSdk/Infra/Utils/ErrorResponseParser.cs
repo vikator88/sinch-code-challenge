@@ -1,3 +1,4 @@
+using DevexpApiSdk.Common.ApiResponseDtos;
 using Newtonsoft.Json;
 
 namespace DevexpApiSdk.Infra.Utils
