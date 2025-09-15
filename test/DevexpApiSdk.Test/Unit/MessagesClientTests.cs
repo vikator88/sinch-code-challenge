@@ -42,7 +42,7 @@ namespace MyApiSdk.Tests.Messages
                         Content = "Hello",
                         From = "me",
                         To = Guid.NewGuid(),
-                        Status = "sent",
+                        Status = "failed",
                         CreatedAt = DateTime.UtcNow
                     }
                 },
@@ -67,6 +67,7 @@ namespace MyApiSdk.Tests.Messages
 
             Assert.That(result.Items.Count, Is.EqualTo(1));
             Assert.That(result.Items.First().Content, Is.EqualTo("Hello"));
+            Assert.That(result.Items.First().Status, Is.EqualTo(MessageStatus.FAILED));
         }
 
         [Test]

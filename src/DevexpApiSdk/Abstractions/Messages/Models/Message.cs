@@ -40,9 +40,9 @@ namespace DevexpApiSdk.Messages.Models
         /// Gets or sets the current delivery status of the message.
         /// </summary>
         /// <remarks>
-        /// Typical values include <c>"queued"</c>, <c>"success"</c>, or <c>"error"</c>.
+        /// Values include <c>Queued</c>, <c>Delivered</c>, or <c>Failed</c>.
         /// </remarks>
-        public string Status { get; set; }
+        public MessageStatus? Status { get; set; }
 
         /// <summary>
         /// Gets or sets the timestamp when the message was created.

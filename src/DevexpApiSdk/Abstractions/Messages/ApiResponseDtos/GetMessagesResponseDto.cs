@@ -1,3 +1,5 @@
+using DevexpApiSdk.Messages.Models;
+
 namespace DevexpApiSdk.Messages.ApiResponseDtos
 {
     // This set of classes are internal because they're only used for deserialization within the SDK and not exposed to consumers.
@@ -28,7 +30,7 @@ namespace DevexpApiSdk.Messages.ApiResponseDtos
 
         public Guid To { get; set; }
 
-        public string Status { get; set; } = string.Empty;
+        public string Status { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

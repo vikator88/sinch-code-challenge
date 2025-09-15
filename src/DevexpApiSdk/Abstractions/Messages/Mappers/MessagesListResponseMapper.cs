@@ -7,6 +7,14 @@ namespace DevexpApiSdk.Messages.Mappers
 {
     internal static class MessagesListResponseMapper
     {
+        private static readonly Dictionary<string, MessageStatus> _statusMap =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                ["queued"] = MessageStatus.QUEUED,
+                ["delivered"] = MessageStatus.DELIVERED,
+                ["failed"] = MessageStatus.FAILED
+            };
+
         internal static IPagedResult<Message> MapToPagedResult(this GetMessagesResponseDto dto)
         {
             // Map messages and rich them with contact info
@@ -20,7 +28,7 @@ namespace DevexpApiSdk.Messages.Mappers
                         ? new Contact { Name = contactDto.Name, Phone = contactDto.Phone }
                         : null,
                     Content = m.Content,
-                    Status = m.Status,
+                    Status = _statusMap.TryGetValue(m.Status, out var status) ? status : null,
                     CreatedAt = m.CreatedAt,
                     DeliveredAt = m.DeliveredAt
                 })
