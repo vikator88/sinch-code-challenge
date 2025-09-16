@@ -187,6 +187,41 @@
             Thrown if no API key was provided.
             </exception>
         </member>
+        <member name="T:DevexpApiSdk.Common.Exceptions.ApiAuthException">
+            <summary>
+            Exception thrown when an API authentication error occurs (HTTP 401 Unauthorized or 403 Forbidden).
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Common.Exceptions.ApiException">
+            <summary>
+            General exception for API errors.
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Common.Exceptions.ApiKeyMissingException">
+            <summary>
+            Exception thrown when no API key is provided.
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Common.Exceptions.ApiNotFoundException">
+            <summary>
+            Exception thrown when a requested resource is not found (HTTP 404 Not Found).
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Common.Exceptions.ApiServerException">
+            <summary>
+            Exception thrown when a server error occurs (HTTP 5xx).
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Common.Exceptions.ApiValidationException">
+            <summary>
+            Exception thrown when a validation error occurs (HTTP 400 Bad Request).
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Common.Exceptions.InvalidPhoneNumberException">
+            <summary>
+            Exception thrown when a phone number is not in valid E.164 format.
+            </summary>
+        </member>
         <member name="T:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric">
             <summary>
             Represents performance metrics collected during the execution of an API operation.
