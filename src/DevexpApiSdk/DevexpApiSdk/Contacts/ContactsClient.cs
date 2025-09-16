@@ -7,6 +7,7 @@ using DevexpApiSdk.Contacts.ApiResponseDtos;
 using DevexpApiSdk.Contacts.Mappers;
 using DevexpApiSdk.Contacts.Models;
 using DevexpApiSdk.Http;
+using DevexpApiSdk.Metrics;
 
 namespace DevexpApiSdk.Contacts
 {
@@ -16,11 +17,17 @@ namespace DevexpApiSdk.Contacts
         private readonly IDevexpApiHttpClient _http;
         private readonly string _resourcePath = "/contacts";
         private readonly DevexpApiOptions _options;
+        private readonly IOperationExecutor _executionWrapper;
 
-        internal ContactsClient(IDevexpApiHttpClient http, DevexpApiOptions options)
+        internal ContactsClient(
+            IDevexpApiHttpClient http,
+            DevexpApiOptions options,
+            IOperationExecutor executionWrapper
+        )
         {
             _http = http;
             _options = options;
+            _executionWrapper = executionWrapper;
         }
 
         /// <inheritdoc/>
@@ -44,7 +51,7 @@ namespace DevexpApiSdk.Contacts
                 throw new InvalidPhoneNumberException(phone);
 
             // Wrap the operation with metrics collection
-            return await OperationExecutor.ExecuteAsync<Contact>(
+            return await _executionWrapper.ExecuteAsync<Contact>(
                 "Contacts.AddContact",
                 async () =>
                 {
@@ -58,7 +65,8 @@ namespace DevexpApiSdk.Contacts
 
                     return response.Data!;
                 },
-                _options
+                itemCount: 1,
+                ct
             );
         }
 
@@ -70,7 +78,7 @@ namespace DevexpApiSdk.Contacts
         {
             // Wrap the operation with metrics collection
             // Added only in some methods to show how it can be done
-            return await OperationExecutor.ExecuteAsync<IReadOnlyList<Contact>>(
+            return await _executionWrapper.ExecuteAsync<IReadOnlyList<Contact>>(
                 "Contacts.BulkAddContacts",
                 async () =>
                 {
@@ -81,7 +89,8 @@ namespace DevexpApiSdk.Contacts
                     }
                     return results;
                 },
-                _options
+                itemCount: contacts.Count(),
+                ct
             );
         }
 
@@ -120,8 +129,8 @@ namespace DevexpApiSdk.Contacts
 
         /// <inheritdoc/>
         public async Task<IPagedResult<Contact>> GetContactsAsync(
-            int pageNumber = 1,
-            int pageSize = 20,
+            int pageNumber,
+            int pageSize,
             CancellationToken ct = default
         )
         {
@@ -133,6 +142,15 @@ namespace DevexpApiSdk.Contacts
             );
 
             return ListContactsResponseMapper.MapToPagedResult(response.Data!);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPagedResult<Contact>> GetContactsAsync(
+            int pageNumber = 1,
+            CancellationToken ct = default
+        )
+        {
+            return await GetContactsAsync(pageNumber, _options.DefaultPageSize, ct);
         }
 
         /// <inheritdoc/>

@@ -2,6 +2,7 @@ using DevexpApiSdk.Common;
 using DevexpApiSdk.Contacts;
 using DevexpApiSdk.Http;
 using DevexpApiSdk.Messages;
+using DevexpApiSdk.Metrics;
 
 namespace DevexpApiSdk
 {
@@ -55,9 +56,22 @@ namespace DevexpApiSdk
             // HTTP client interno
             _http = new DefaultDevexpApiHttpClient(_options);
 
+            // Wrapper for performance metrics
+            IOperationExecutor _executionWrapper = null;
+            if (_options.EnableMetrics && _options.OnOperationCompleted != null)
+            {
+                _executionWrapper = new MetricsEnabledOperationExecutor(
+                    _options.OnOperationCompleted
+                );
+            }
+            else
+            {
+                _executionWrapper = new NoMetricsOperationExecutor();
+            }
+
             // Subclientes
-            Contacts = new ContactsClient(_http, _options);
-            Messages = new MessagesClient(_http, _options);
+            Contacts = new ContactsClient(_http, _options, _executionWrapper);
+            Messages = new MessagesClient(_http, _options, _executionWrapper);
         }
 
         /// <summary>

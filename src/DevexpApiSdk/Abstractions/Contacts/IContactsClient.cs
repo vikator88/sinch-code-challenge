@@ -25,8 +25,22 @@ namespace DevexpApiSdk.Contacts
         /// <exception cref="ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
         /// <exception cref="ApiException">Thrown if the API returns an unexpected error.</exception>
         Task<IPagedResult<Contact>> GetContactsAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken ct = default
+        );
+
+        /// <summary>
+        /// Retrieves a paged list of contacts using the default page size.
+        /// </summary>
+        /// <param name="pageNumber">The index of the page to retrieve (1-based).</param>
+        /// <param name="ct">An optional cancellation token.</param>
+        /// <returns>A paged result containing the requested contacts.</returns>
+        /// <exception cref="ApiAuthException">Thrown if authentication fails.</exception>
+        /// <exception cref="ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+        /// <exception cref="ApiException">Thrown if the API returns an unexpected error.</exception>
+        Task<IPagedResult<Contact>> GetContactsAsync(
             int pageNumber = 1,
-            int pageSize = 20,
             CancellationToken ct = default
         );
 

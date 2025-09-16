@@ -5,6 +5,7 @@ using DevexpApiSdk.Http;
 using DevexpApiSdk.Messages.ApiResponseDtos;
 using DevexpApiSdk.Messages.Mappers;
 using DevexpApiSdk.Messages.Models;
+using DevexpApiSdk.Metrics;
 
 namespace DevexpApiSdk.Messages
 {
@@ -14,19 +15,45 @@ namespace DevexpApiSdk.Messages
         private readonly IDevexpApiHttpClient _http;
         private readonly string _resourcePath = "/messages";
         private readonly DevexpApiOptions _options;
+        private readonly IOperationExecutor _executionWrapper;
 
-        internal MessagesClient(IDevexpApiHttpClient http, DevexpApiOptions options)
+        internal MessagesClient(
+            IDevexpApiHttpClient http,
+            DevexpApiOptions options,
+            IOperationExecutor executionWrapper
+        )
         {
             _http = http;
             _options = options;
+            _executionWrapper = executionWrapper;
         }
 
         /// <inheritdoc/>
-        public async Task<IPagedResult<Message>> GetMessagesAsync(CancellationToken ct = default)
+        public async Task<IPagedResult<Message>> GetMessagesAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken ct = default
+        )
         {
             var response = await _http.SendAsync<GetMessagesResponseDto>(
                 HttpMethod.Get,
-                $"{_resourcePath}",
+                $"{_resourcePath}?page={pageNumber}&limit={pageSize}",
+                null,
+                ct
+            );
+
+            return MessagesListResponseMapper.MapToPagedResult(response.Data!);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPagedResult<Message>> GetMessagesAsync(
+            int pageNumber = 1,
+            CancellationToken ct = default
+        )
+        {
+            var response = await _http.SendAsync<GetMessagesResponseDto>(
+                HttpMethod.Get,
+                $"{_resourcePath}?page={pageNumber}&limit={_options.DefaultPageSize}",
                 null,
                 ct
             );
@@ -57,14 +84,22 @@ namespace DevexpApiSdk.Messages
             CancellationToken ct = default
         )
         {
-            var createMessageRequest = new CreateMessageRequest
-            {
-                From = from,
-                Content = messageContent,
-                To = new CreateMessageContactRequest { Id = toContactId }
-            };
+            return await _executionWrapper.ExecuteAsync<Message>(
+                "SendMessageAsync",
+                async () =>
+                {
+                    var createMessageRequest = new CreateMessageRequest
+                    {
+                        From = from,
+                        Content = messageContent,
+                        To = new CreateMessageContactRequest { Id = toContactId }
+                    };
 
-            return await SendMessageAsync(createMessageRequest, ct);
+                    return await SendMessageAsync(createMessageRequest, ct);
+                },
+                itemCount: 1,
+                ct
+            );
         }
 
         /// <inheritdoc/>

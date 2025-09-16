@@ -6,6 +6,7 @@ using DevexpApiSdk.Http;
 using DevexpApiSdk.Messages;
 using DevexpApiSdk.Messages.ApiResponseDtos;
 using DevexpApiSdk.Messages.Models;
+using DevexpApiSdk.Metrics;
 using Moq;
 using NUnit.Framework;
 
@@ -17,6 +18,7 @@ namespace MyApiSdk.Tests.Messages
         private Mock<IDevexpApiHttpClient> _httpMock;
         private DevexpApiOptions _options;
         private MessagesClient _client;
+        private IOperationExecutor _executionWrapper = new NoMetricsOperationExecutor();
 
         [SetUp]
         public void SetUp()
@@ -26,7 +28,7 @@ namespace MyApiSdk.Tests.Messages
                 .CreateDefault()
                 .WithApiKey("there-is-no-key")
                 .Build();
-            _client = new MessagesClient(_httpMock.Object, _options);
+            _client = new MessagesClient(_httpMock.Object, _options, _executionWrapper);
         }
 
         [Test]
@@ -56,7 +58,7 @@ namespace MyApiSdk.Tests.Messages
                 .Setup(h =>
                     h.SendAsync<GetMessagesResponseDto>(
                         HttpMethod.Get,
-                        "/messages",
+                        It.Is<string>(p => p.StartsWith("/messages")),
                         null,
                         It.IsAny<CancellationToken>()
                     )

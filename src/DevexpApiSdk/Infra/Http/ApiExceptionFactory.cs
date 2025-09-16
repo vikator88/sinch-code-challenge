@@ -1,7 +1,7 @@
 using System.Net;
 using DevexpApiSdk.Common.ApiResponseDtos;
 using DevexpApiSdk.Common.Exceptions;
-using DevexpApiSdk.Infra.Utils;
+using DevexpApiSdk.Utils;
 
 namespace DevexpApiSdk.Http
 {

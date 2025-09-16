@@ -16,7 +16,7 @@ var cancellationToken = cts.Token;
 if (args.Length == 0)
 {
     Console.WriteLine(
-        "Please specify a sample to run: contacts | multi-contacts | logger | profiler | messages"
+        "Please specify a sample to run: contacts | multi-contacts | messages | logger | profiler"
     );
     return;
 }
@@ -42,6 +42,8 @@ switch (sampleName)
         break;
 
     default:
-        Console.WriteLine($"Unknown sample '{sampleName}'. Available: contacts | messages");
+        Console.WriteLine(
+            $"Unknown sample '{sampleName}'. Available: contacts | multi-contacts | messages | logger | profiler"
+        );
         break;
 }

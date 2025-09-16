@@ -1,7 +1,7 @@
 using DevexpApiSdk.Common.ApiResponseDtos;
 using Newtonsoft.Json;
 
-namespace DevexpApiSdk.Infra.Utils
+namespace DevexpApiSdk.Utils
 {
     internal static class ErrorResponseParser
     {

@@ -1,14 +1,22 @@
 using System.Diagnostics;
+using DevexpApiSdk.Common.Metrics;
 
-namespace DevexpApiSdk.Common.Metrics
+namespace DevexpApiSdk.Metrics
 {
-    internal static class OperationExecutor
+    internal class MetricsEnabledOperationExecutor : IOperationExecutor
     {
-        internal static async Task<T> ExecuteAsync<T>(
+        private readonly Action<OperationPerformanceMetric> _onCompleted;
+
+        internal MetricsEnabledOperationExecutor(Action<OperationPerformanceMetric> onCompleted)
+        {
+            _onCompleted = onCompleted;
+        }
+
+        public async Task<T> ExecuteAsync<T>(
             string operationName,
             Func<Task<T>> action,
-            DevexpApiOptions options,
-            int? itemCount = null
+            int? itemCount = null,
+            CancellationToken ct = default
         )
         {
             var sw = Stopwatch.StartNew();
@@ -17,7 +25,7 @@ namespace DevexpApiSdk.Common.Metrics
                 var result = await action();
                 sw.Stop();
 
-                options.OnOperationCompleted?.Invoke(
+                _onCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
                         OperationName = operationName,
@@ -32,7 +40,7 @@ namespace DevexpApiSdk.Common.Metrics
             catch (Exception ex)
             {
                 sw.Stop();
-                options.OnOperationCompleted?.Invoke(
+                _onCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
                         OperationName = operationName,
@@ -46,11 +54,11 @@ namespace DevexpApiSdk.Common.Metrics
             }
         }
 
-        internal static async Task ExecuteAsync(
+        public async Task ExecuteAsync(
             string operationName,
             Func<Task> action,
-            DevexpApiOptions options,
-            int? itemCount = null
+            int? itemCount = null,
+            CancellationToken ct = default
         )
         {
             var sw = Stopwatch.StartNew();
@@ -59,7 +67,7 @@ namespace DevexpApiSdk.Common.Metrics
                 await action();
                 sw.Stop();
 
-                options.OnOperationCompleted?.Invoke(
+                _onCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
                         OperationName = operationName,
@@ -72,7 +80,7 @@ namespace DevexpApiSdk.Common.Metrics
             catch (Exception ex)
             {
                 sw.Stop();
-                options.OnOperationCompleted?.Invoke(
+                _onCompleted?.Invoke(
                     new OperationPerformanceMetric
                     {
                         OperationName = operationName,

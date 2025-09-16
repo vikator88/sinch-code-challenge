@@ -5,6 +5,7 @@ using DevexpApiSdk.Contacts;
 using DevexpApiSdk.Contacts.ApiResponseDtos;
 using DevexpApiSdk.Contacts.Models;
 using DevexpApiSdk.Http;
+using DevexpApiSdk.Metrics;
 using Moq;
 
 namespace DevexpApiSdk.Tests.Contacts
@@ -15,6 +16,7 @@ namespace DevexpApiSdk.Tests.Contacts
         private Mock<IDevexpApiHttpClient> _httpMock = null!;
         private DevexpApiOptions _options = null!;
         private ContactsClient _sut = null!;
+        private IOperationExecutor _executionWrapper = new NoMetricsOperationExecutor();
 
         [SetUp]
         public void Setup()
@@ -22,7 +24,7 @@ namespace DevexpApiSdk.Tests.Contacts
             _httpMock = new Mock<IDevexpApiHttpClient>();
             _options = new DevexpApiOptionsBuilder().WithApiKey("there-is-no-key").Build();
 
-            _sut = new ContactsClient(_httpMock.Object, _options);
+            _sut = new ContactsClient(_httpMock.Object, _options, _executionWrapper);
         }
 
         [Test]
@@ -144,6 +146,8 @@ namespace DevexpApiSdk.Tests.Contacts
                 .WithOperationProfiler(m => capturedMetric = m)
                 .Build();
 
+            _executionWrapper = new MetricsEnabledOperationExecutor(options.OnOperationCompleted);
+
             var newContact = new Contact
             {
                 Id = Guid.NewGuid(),
@@ -164,7 +168,7 @@ namespace DevexpApiSdk.Tests.Contacts
                     new DevexpApiResponse<Contact>(newContact, HttpStatusCode.Created, "{}")
                 );
 
-            var client = new ContactsClient(_httpMock.Object, options);
+            var client = new ContactsClient(_httpMock.Object, options, _executionWrapper);
 
             // Act
             await client.AddContactAsync("Victor", "+34666555444");

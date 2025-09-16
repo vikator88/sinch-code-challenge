@@ -18,6 +18,8 @@ namespace DevexpApiSdk.Messages
         /// <summary>
         /// Retrieves a paged collection of messages.
         /// </summary>
+        /// <param name="pageNumber">The page number to retrieve.</param>
+        /// <param name="pageSize">The number of items per page.</param>
         /// <param name="ct">An optional cancellation token.</param>
         /// <returns>
         /// A paged result containing <see cref="Message"/> entities
@@ -26,7 +28,28 @@ namespace DevexpApiSdk.Messages
         /// <exception cref="ApiAuthException">Thrown if authentication fails.</exception>
         /// <exception cref="ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
         /// <exception cref="ApiException">Thrown if the API returns an unexpected error.</exception>
-        Task<IPagedResult<Message>> GetMessagesAsync(CancellationToken ct = default);
+        Task<IPagedResult<Message>> GetMessagesAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken ct = default
+        );
+
+        /// <summary>
+        /// Retrieves a paged collection of messages using the default page size.
+        /// </summary>
+        /// <param name="pageNumber">The page number to retrieve.</param>
+        /// <param name="ct">An optional cancellation token.</param>
+        /// <returns>
+        /// A paged result containing <see cref="Message"/> entities
+        /// corresponding to messages retrieved from the API.
+        /// </returns>
+        /// <exception cref="ApiAuthException">Thrown if authentication fails.</exception>
+        /// <exception cref="ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+        /// <exception cref="ApiException">Thrown if the API returns an unexpected error.</exception>
+        Task<IPagedResult<Message>> GetMessagesAsync(
+            int pageNumber = 1,
+            CancellationToken ct = default
+        );
 
         /// <summary>
         /// Retrieves a single message by its unique identifier.
