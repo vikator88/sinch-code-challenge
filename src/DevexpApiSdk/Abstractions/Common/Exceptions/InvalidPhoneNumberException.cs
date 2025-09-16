@@ -1,5 +1,8 @@
 namespace DevexpApiSdk.Common.Exceptions
 {
+    /// <summary>
+    /// Exception thrown when a phone number is not in valid E.164 format.
+    /// </summary>
     public class InvalidPhoneNumberException : Exception
     {
         public string Phone { get; }

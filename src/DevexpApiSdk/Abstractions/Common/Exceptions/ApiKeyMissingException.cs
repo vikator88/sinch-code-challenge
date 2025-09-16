@@ -2,6 +2,9 @@ using System;
 
 namespace DevexpApiSdk.Common.Exceptions
 {
+    /// <summary>
+    /// Exception thrown when no API key is provided.
+    /// </summary>
     public class ApiKeyMissingException : Exception
     {
         public ApiKeyMissingException()

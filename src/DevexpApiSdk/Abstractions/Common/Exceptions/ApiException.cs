@@ -2,6 +2,9 @@ using System.Net;
 
 namespace DevexpApiSdk.Common.Exceptions
 {
+    /// <summary>
+    /// General exception for API errors.
+    /// </summary>
     public class ApiException : Exception
     {
         public HttpStatusCode StatusCode { get; }

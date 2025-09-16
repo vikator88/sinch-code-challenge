@@ -2,6 +2,9 @@ using System.Net;
 
 namespace DevexpApiSdk.Common.Exceptions
 {
+    /// <summary>
+    /// Exception thrown when a server error occurs (HTTP 5xx).
+    /// </summary>
     public class ApiServerException : ApiException
     {
         public ApiServerException(
