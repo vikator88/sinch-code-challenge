@@ -1,0 +1,805 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DevexpApiSdk</name>
+    </assembly>
+    <members>
+        <member name="T:DevexpApiSdk.Common.DevexpApiOptions">
+             <summary>
+             Represents configuration options for the Devexp API client.
+             </summary>
+             <remarks>
+             This record encapsulates all runtime configuration parameters used by the
+             <see cref="T:DevexpApiSdk.DevexpApiClient"/> and its sub-clients. Options include base URL,
+             authentication, HTTP behavior, retry policies, logging, and metrics collection.
+            
+             Instances of this class are created via the
+             <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> to ensure correct initialization.
+             </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.BaseUrl">
+            <summary>
+            Gets the base URL of the Devexp API.
+            </summary>
+            <remarks>
+            Defaults to <c>http://localhost:3000</c>. In production scenarios,
+            this should point to the official API endpoint.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.ApiKey">
+            <summary>
+            Gets the API key used for authenticating requests.
+            </summary>
+            <remarks>
+            If not set, the <see cref="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.Build"/> method will throw
+            <see cref="T:DevexpApiSdk.Common.Exceptions.ApiKeyMissingException"/>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.Timeout">
+            <summary>
+            Gets the maximum duration to wait for an HTTP response before timing out.
+            </summary>
+            <remarks>Defaults to 30 seconds.</remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.EnableAutoRetries">
+            <summary>
+            Gets a value indicating whether automatic retries should be enabled
+            for transient failures.
+            </summary>
+            <remarks>Defaults to <c>true</c>.</remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.MaxRetryAttempts">
+            <summary>
+            Gets the maximum number of retry attempts when <see cref="P:DevexpApiSdk.Common.DevexpApiOptions.EnableAutoRetries"/> is enabled.
+            </summary>
+            <remarks>Defaults to <c>3</c>.</remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.RetryDelayInMilliseconds">
+            <summary>
+            Gets the delay interval between retry attempts.
+            </summary>
+            <remarks>Defaults to 2000 milliseconds.</remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.EnableLogging">
+            <summary>
+            Gets a value indicating whether request and response logging is enabled.
+            </summary>
+            <remarks>
+            Logging is performed through the <see cref="P:DevexpApiSdk.Common.DevexpApiOptions.Logger"/> instance
+            if provided. Defaults to <c>false</c>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.Logger">
+            <summary>
+            Gets the logger instance used for diagnostic logging.
+            </summary>
+            <remarks>
+            Must implement <see cref="T:Microsoft.Extensions.Logging.ILogger"/> from Microsoft.Extensions.Logging.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.EnableMetrics">
+            <summary>
+            Gets a value indicating whether performance metrics collection is enabled.
+            </summary>
+            <remarks>
+            When enabled, the <see cref="P:DevexpApiSdk.Common.DevexpApiOptions.OnOperationCompleted"/> callback will be
+            invoked after each API operation with performance data.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.OnOperationCompleted">
+            <summary>
+            Gets the callback invoked when an API operation completes,
+            providing performance metrics data.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Common.DevexpApiOptions.DefaultPageSize">
+            <summary>
+            Gets the default page size used in paginated API requests.
+            </summary>
+            <remarks>Defaults to <c>20</c>.</remarks>
+        </member>
+        <member name="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder">
+             <summary>
+             Provides a fluent builder for creating <see cref="T:DevexpApiSdk.Common.DevexpApiOptions"/> instances.
+             </summary>
+             <remarks>
+             This builder follows a fluent interface pattern, allowing chaining of configuration methods
+             before calling <see cref="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.Build"/> to produce an immutable <see cref="T:DevexpApiSdk.Common.DevexpApiOptions"/> instance.
+            
+             The <see cref="!:ApiKey"/> property must be set using <see cref="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.WithApiKey(System.String)"/> before invoking <see cref="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.Build"/>,
+             otherwise an <see cref="T:DevexpApiSdk.Common.Exceptions.ApiKeyMissingException"/> will be thrown.
+             </remarks>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.CreateDefault">
+            <summary>
+            Creates a new <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance with default values.
+            </summary>
+            <returns>A new <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.WithApiKey(System.String)">
+            <summary>
+            Sets the API key to be used for authenticating requests.
+            </summary>
+            <param name="apiKey">The API key string.</param>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.WithBaseUrl(System.String)">
+            <summary>
+            Sets the base URL for the API.
+            </summary>
+            <param name="baseUrl">The base URL string.</param>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.WithTimeout(System.TimeSpan)">
+            <summary>
+            Sets the maximum HTTP timeout for requests.
+            </summary>
+            <param name="timeout">The maximum time to wait before a request times out.</param>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.EnableRetries(System.Int32,System.Nullable{System.TimeSpan})">
+            <summary>
+            Enables automatic retries for transient failures.
+            </summary>
+            <param name="maxAttempts">The maximum number of retry attempts. Defaults to 3.</param>
+            <param name="delay">
+            The delay interval between retries. Defaults to 2000 milliseconds if not provided.
+            </param>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.DisableRetries">
+            <summary>
+            Disables automatic retries for transient failures.
+            </summary>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.EnableLogging(Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Enables logging and assigns the specified <see cref="T:Microsoft.Extensions.Logging.ILogger"/> instance.
+            </summary>
+            <param name="logger">The logger instance used for diagnostic logging.</param>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.WithOperationProfiler(System.Action{DevexpApiSdk.Common.Metrics.OperationPerformanceMetric})">
+            <summary>
+            Enables operation profiling and sets a hook callback for performance metrics collection.
+            </summary>
+            <param name="hook">The callback invoked after each operation with performance data.</param>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.WithPageSize(System.Int32)">
+            <summary>
+            Sets the default page size for paginated API requests.
+            </summary>
+            <param name="pageSize">The default number of items per page.</param>
+            <returns>The current <see cref="T:DevexpApiSdk.Common.DevexpApiOptionsBuilder"/> instance.</returns>
+        </member>
+        <member name="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.Build">
+            <summary>
+            Builds and returns a new <see cref="T:DevexpApiSdk.Common.DevexpApiOptions"/> instance with the configured values.
+            </summary>
+            <remarks>
+            This method validates that an API key has been provided using <see cref="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.WithApiKey(System.String)"/>.
+            If the API key is not set, an <see cref="T:DevexpApiSdk.Common.Exceptions.ApiKeyMissingException"/> will be thrown.
+            </remarks>
+            <returns>A fully configured <see cref="T:DevexpApiSdk.Common.DevexpApiOptions"/> instance.</returns>
+            <exception cref="T:DevexpApiSdk.Common.Exceptions.ApiKeyMissingException">
+            Thrown if no API key was provided.
+            </exception>
+        </member>
+        <member name="T:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric">
+            <summary>
+            Represents performance metrics collected during the execution of an API operation.
+            </summary>
+            <remarks>
+            This model is typically passed to the <see cref="P:DevexpApiSdk.Common.DevexpApiOptions.OnOperationCompleted"/> callback when metrics are enabled.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric.OperationName">
+            <summary>
+            Gets the logical name of the operation being executed.
+            </summary>
+            <remarks>
+            For example, <c>"Contacts.AddContact"</c> or <c>"Messages.SendMessage"</c>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric.Duration">
+            <summary>
+            Gets the total execution duration of the operation.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric.ItemCount">
+            <summary>
+            Gets the number of items processed or returned by the operation, if applicable.
+            </summary>
+            <remarks>
+            For non-collection operations, this property may be <c>null</c>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric.Success">
+            <summary>
+            Gets a value indicating whether the operation completed successfully.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric.Exception">
+            <summary>
+            Gets the exception thrown during the operation, if any.
+            </summary>
+            <remarks>
+            If <see cref="P:DevexpApiSdk.Common.Metrics.OperationPerformanceMetric.Success"/> is <c>true</c>, this property will be <c>null</c>.
+            </remarks>
+        </member>
+        <member name="M:DevexpApiSdk.Common.Security.WebhookVerifier.VerifySignature(System.String,System.String,System.String)">
+            <summary>
+            Verifies the HMAC-SHA256 signature of a webhook request.
+            </summary>
+            <param name="messageBody">The raw body of the request as a string.</param>
+            <param name="authorizationHeader">The value of the Authorization header (format: "Signature {hex}").</param>
+            <param name="secret">The shared webhook secret used to sign the request.</param>
+            <returns><c>true</c> if the signature is valid; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:DevexpApiSdk.Contacts.IContactsClient">
+            <summary>
+            Provides a strongly-typed client for interacting with the Contacts resource domain
+            of the Devexp API.
+            </summary>
+            <remarks>
+            This client encapsulates HTTP operations for creating, retrieving, updating,
+            and deleting contact records. It performs input validation (e.g., E.164 phone numbers)
+            and wraps execution with optional metrics <see cref="!:OperationPerformanceMetric"/>.
+            </remarks>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.GetContactsAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a paged list of contacts.
+            </summary>
+            <param name="pageNumber">The index of the page to retrieve (1-based).</param>
+            <param name="pageSize">The maximum number of contacts per page.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>A paged result containing the requested contacts.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.GetContactsAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a paged list of contacts using the default page size.
+            </summary>
+            <param name="pageNumber">The index of the page to retrieve (1-based).</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>A paged result containing the requested contacts.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.GetContactByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a single contact by its unique identifier.
+            </summary>
+            <param name="contactId">The unique identifier of the contact.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The requested <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/> if found.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.AddContactAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Creates a new contact asynchronously with the specified name and phone number.
+            </summary>
+            <param name="name">The contact's display name.</param>
+            <param name="phone">The contact's phone number in E.164 format.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The newly created <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/>.</returns>
+            <exception cref="!:InvalidPhoneNumberException">Thrown if the phone number is not in valid E.164 format.</exception>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiValidationException">Thrown if the request data is invalid.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.AddContactAsync(DevexpApiSdk.Contacts.Models.CreateContactRequest,System.Threading.CancellationToken)">
+            <summary>
+            Creates a new contact asynchronously from a request model.
+            </summary>
+            <param name="createContactRequest">The request model containing the contact name and phone number.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The newly created <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/>.</returns>
+            <exception cref="!:InvalidPhoneNumberException">Thrown if the phone number is not in valid E.164 format.</exception>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiValidationException">Thrown if the request data is invalid.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.AddContactsAsync(System.Collections.Generic.IEnumerable{DevexpApiSdk.Contacts.Models.CreateContactRequest},System.Threading.CancellationToken)">
+            <summary>
+            Creates multiple contacts asynchronously.
+            </summary>
+            <param name="contacts">A collection of contact creation requests.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>A read-only list of newly created <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/> records.</returns>
+            <exception cref="!:InvalidPhoneNumberException">Thrown if the phone number is not in valid E.164 format.</exception>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiValidationException">Thrown if the request data is invalid.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.UpdateContactAsync(System.Guid,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Updates the specified contact with a new name and phone number.
+            </summary>
+            <param name="id">The unique identifier of the contact.</param>
+            <param name="name">The new display name of the contact.</param>
+            <param name="phone">The new phone number of the contact in E.164 format.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The updated <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/>.</returns>
+            <exception cref="!:InvalidPhoneNumberException">Thrown if the phone number is not in valid E.164 format.</exception>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.UpdateContactAsync(DevexpApiSdk.Contacts.Models.Contact,System.Threading.CancellationToken)">
+            <summary>
+            Updates an existing contact asynchronously.
+            </summary>
+            <param name="updateContactRequest">The contact entity containing the updated values.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The updated <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/>.</returns>
+            <exception cref="!:InvalidPhoneNumberException">Thrown if the phone number is not in valid E.164 format.</exception>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.UpdateContactsAsync(System.Collections.Generic.IEnumerable{DevexpApiSdk.Contacts.Models.Contact},System.Threading.CancellationToken)">
+            <summary>
+            Updates multiple contacts asynchronously.
+            </summary>
+            <param name="updateContactRequests">A collection of contact entities with updated values.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>A read-only list of updated <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/> records.</returns>
+            <exception cref="!:InvalidPhoneNumberException">Thrown if the phone number is not in valid E.164 format.</exception>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.DeleteContactAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a contact by its unique identifier.
+            </summary>
+            <param name="contactId">The unique identifier of the contact.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.DeleteContactAsync(DevexpApiSdk.Contacts.Models.Contact,System.Threading.CancellationToken)">
+            <summary>
+            Deletes the specified contact.
+            </summary>
+            <param name="contact">The contact to delete.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.DeleteContactsAsync(System.Collections.Generic.IEnumerable{System.Guid},System.Threading.CancellationToken)">
+            <summary>
+            Deletes multiple contacts by their unique identifiers.
+            </summary>
+            <param name="contactIds">A collection of contact IDs.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.IContactsClient.DeleteContactsAsync(System.Collections.Generic.IEnumerable{DevexpApiSdk.Contacts.Models.Contact},System.Threading.CancellationToken)">
+            <summary>
+            Deletes multiple contacts.
+            </summary>
+            <param name="contacts">A collection of contacts to delete.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="T:DevexpApiSdk.Contacts.Models.Contact">
+            <summary>
+            Represents a contact entity in the Devexp API.
+            </summary>
+            <remarks>
+            A contact is uniquely identified by <see cref="P:DevexpApiSdk.Contacts.Models.Contact.Id"/> and contains
+            basic attributes such as <see cref="P:DevexpApiSdk.Contacts.Models.Contact.Name"/> and <see cref="P:DevexpApiSdk.Contacts.Models.Contact.Phone"/>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Contacts.Models.Contact.Id">
+            <summary>
+            Gets or sets the unique identifier of the contact.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Contacts.Models.Contact.Name">
+            <summary>
+            Gets or sets the display name of the contact.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Contacts.Models.Contact.Phone">
+            <summary>
+            Gets or sets the phone number of the contact in format E.164.
+            </summary>
+            /// <remarks>
+            If the phone number is not in valid E.164 format,
+            an <see cref="T:DevexpApiSdk.Common.Exceptions.InvalidPhoneNumberException"/>
+            will be thrown during validation.
+            </remarks>
+        </member>
+        <member name="T:DevexpApiSdk.Contacts.Models.CreateContactRequest">
+            <summary>
+            Represents the payload used to create a new contact in the Devexp API.
+            </summary>
+            <remarks>
+            This request model is consumed by the <c>Contacts</c> endpoint when
+            invoking operations such as <c>AddContactAsync</c>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Contacts.Models.CreateContactRequest.Name">
+            <summary>
+            Gets or sets the display name of the contact to create.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Contacts.Models.CreateContactRequest.Phone">
+            <summary>
+            Gets or sets the contact's phone number in E.164 format.
+            </summary>
+            <remarks>
+            If the phone number is not in valid E.164 format,
+            an <see cref="T:DevexpApiSdk.Common.Exceptions.InvalidPhoneNumberException"/>
+            will be thrown during validation.
+            </remarks>
+        </member>
+        <member name="T:DevexpApiSdk.Contacts.ContactsClient">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.AddContactAsync(DevexpApiSdk.Contacts.Models.CreateContactRequest,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.AddContactAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.AddContactsAsync(System.Collections.Generic.IEnumerable{DevexpApiSdk.Contacts.Models.CreateContactRequest},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.DeleteContactAsync(System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.DeleteContactAsync(DevexpApiSdk.Contacts.Models.Contact,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.DeleteContactsAsync(System.Collections.Generic.IEnumerable{System.Guid},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.DeleteContactsAsync(System.Collections.Generic.IEnumerable{DevexpApiSdk.Contacts.Models.Contact},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.GetContactsAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.GetContactsAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.GetContactByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.UpdateContactAsync(System.Guid,System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.UpdateContactAsync(DevexpApiSdk.Contacts.Models.Contact,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Contacts.ContactsClient.UpdateContactsAsync(System.Collections.Generic.IEnumerable{DevexpApiSdk.Contacts.Models.Contact},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DevexpApiSdk.Messages.IMessagesClient">
+            <summary>
+            Provides a strongly-typed client for interacting with the Messages resource domain
+            of the Devexp API.
+            </summary>
+            <remarks>
+            This client encapsulates HTTP operations for sending messages, retrieving messages by ID,
+            and listing messages. It leverages <see cref="!:IDevexpApiHttpClient"/> for transport
+            and DTO mappers for response transformation.
+            </remarks>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.IMessagesClient.GetMessagesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a paged collection of messages.
+            </summary>
+            <param name="pageNumber">The page number to retrieve.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>
+            A paged result containing <see cref="T:DevexpApiSdk.Messages.Models.Message"/> entities
+            corresponding to messages retrieved from the API.
+            </returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.IMessagesClient.GetMessagesAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a paged collection of messages using the default page size.
+            </summary>
+            <param name="pageNumber">The page number to retrieve.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>
+            A paged result containing <see cref="T:DevexpApiSdk.Messages.Models.Message"/> entities
+            corresponding to messages retrieved from the API.
+            </returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.IMessagesClient.GetMessageByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves a single message by its unique identifier.
+            </summary>
+            <param name="messageId">The unique identifier of the message.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The requested <see cref="T:DevexpApiSdk.Messages.Models.Message"/>.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.IMessagesClient.SendMessageAsync(System.String,System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Sends a message to a specific contact identified by its <see cref="T:System.Guid"/>.
+            </summary>
+            <param name="from">The sender identifier (e.g., phone number or alphanumeric ID).</param>
+            <param name="messageContent">The message body content.</param>
+            <param name="toContactId">The unique identifier of the recipient contact.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The created <see cref="T:DevexpApiSdk.Messages.Models.Message"/> including delivery metadata.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.IMessagesClient.SendMessageAsync(System.String,System.String,DevexpApiSdk.Contacts.Models.Contact,System.Threading.CancellationToken)">
+            <summary>
+            Sends a message to a specific contact.
+            </summary>
+            <param name="from">The sender identifier (e.g., phone number or alphanumeric ID).</param>
+            <param name="messageContent">The message body content.</param>
+            <param name="toContact">The recipient <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/> entity.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The created <see cref="T:DevexpApiSdk.Messages.Models.Message"/> including delivery metadata.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.IMessagesClient.SendMessageAsync(DevexpApiSdk.Messages.Models.CreateMessageRequest,System.Threading.CancellationToken)">
+            <summary>
+            Sends a message using a request model.
+            </summary>
+            <param name="createMessageRequest">The request object containing sender, content, and recipient.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>The created <see cref="T:DevexpApiSdk.Messages.Models.Message"/> including delivery metadata.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.IMessagesClient.SendMessageAsync(System.String,System.String,DevexpApiSdk.Contacts.Models.Contact[],System.Threading.CancellationToken)">
+            <summary>
+            Sends the same message to multiple contacts.
+            </summary>
+            <param name="from">The sender identifier (e.g., phone number or alphanumeric ID).</param>
+            <param name="messageContent">The message body content.</param>
+            <param name="toContacts">An array of recipient <see cref="T:DevexpApiSdk.Contacts.Models.Contact"/> entities.</param>
+            <param name="ct">An optional cancellation token.</param>
+            <returns>A read-only list of <see cref="T:DevexpApiSdk.Messages.Models.Message"/> objects, one for each recipient.</returns>
+            <exception cref="!:ApiAuthException">Thrown if authentication fails.</exception>
+            <exception cref="!:ApiNotFoundException">Thrown if the contact is not found.</exception>
+            <exception cref="!:ApiServerException">Thrown if the server encounters an error (5XX error).</exception>
+            <exception cref="!:ApiException">Thrown if the API returns an unexpected error.</exception>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.CreateMessageRequest.Content">
+            <summary>
+            Gets or sets the body content of the message.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.CreateMessageRequest.From">
+            <summary>
+            Gets or sets the sender identifier.
+            </summary>
+            <remarks>
+            This may be an alphanumeric sender ID or a phone number
+            (depending on API configuration).
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.CreateMessageRequest.To">
+            <summary>
+            Gets or sets the recipient information for the message.
+            </summary>
+            <remarks>
+            The <see cref="P:DevexpApiSdk.Messages.Models.CreateMessageRequest.To"/> property must contain a valid
+            <see cref="T:DevexpApiSdk.Messages.Models.CreateMessageContactRequest"/> referencing an existing contact.
+            </remarks>
+        </member>
+        <member name="T:DevexpApiSdk.Messages.Models.CreateMessageContactRequest">
+            <summary>
+            Represents the recipient of a message by contact identifier.
+            </summary>
+            <remarks>
+            This model is nested within <see cref="T:DevexpApiSdk.Messages.Models.CreateMessageRequest"/>
+            to reference an existing contact as the recipient.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.CreateMessageContactRequest.Id">
+            <summary>
+            Gets or sets the unique identifier of the recipient contact.
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Messages.Models.Message">
+            <summary>
+            Represents a message entity in the Devexp API.
+            </summary>
+            <remarks>
+            A message contains content, sender and recipient information,
+            delivery status, and timestamps for creation and delivery.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.Id">
+            <summary>
+            Gets or sets the unique identifier of the message.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.Content">
+            <summary>
+            Gets or sets the body content of the message.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.From">
+            <summary>
+            Gets or sets the sender identifier.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.To">
+            <summary>
+            Gets or sets the unique identifier of the recipient contact.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.ToContact">
+            <summary>
+            Gets or sets the recipient contact entity, if available.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.Status">
+            <summary>
+            Gets or sets the current delivery status of the message.
+            </summary>
+            <remarks>
+            Values include <c>Queued</c>, <c>Delivered</c>, or <c>Failed</c>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.CreatedAt">
+            <summary>
+            Gets or sets the timestamp when the message was created.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.Messages.Models.Message.DeliveredAt">
+            <summary>
+            Gets or sets the timestamp when the message was successfully delivered, if applicable.
+            </summary>
+            <remarks>
+            This property is <c>null</c> if the message has not yet been delivered.
+            </remarks>
+        </member>
+        <member name="T:DevexpApiSdk.Messages.Models.MessageStatus">
+            <summary>
+            Represents the delivery status of a message.
+            </summary>
+        </member>
+        <member name="T:DevexpApiSdk.Messages.MessagesClient">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.MessagesClient.GetMessagesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.MessagesClient.GetMessagesAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.MessagesClient.GetMessageByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.MessagesClient.SendMessageAsync(System.String,System.String,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.MessagesClient.SendMessageAsync(System.String,System.String,DevexpApiSdk.Contacts.Models.Contact,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.MessagesClient.SendMessageAsync(System.String,System.String,DevexpApiSdk.Contacts.Models.Contact[],System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DevexpApiSdk.Messages.MessagesClient.SendMessageAsync(DevexpApiSdk.Messages.Models.CreateMessageRequest,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DevexpApiSdk.DevexpApiClient">
+            <summary>
+            Provides a strongly-typed client wrapper for interacting with the Devexp API.
+            </summary>
+            <remarks>
+            This client encapsulates HTTP communication with the Devexp API and exposes
+            typed sub-clients for managing specific resource domains such as <see cref="P:DevexpApiSdk.DevexpApiClient.Contacts"/>
+            and <see cref="P:DevexpApiSdk.DevexpApiClient.Messages"/>.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.DevexpApiClient.Contacts">
+            <summary>
+            Provides access to all Contacts API operations, such as creating, retrieving, updating,
+            and deleting contacts.
+            </summary>
+            <remarks>
+            This property returns an instance of <see cref="T:DevexpApiSdk.Contacts.IContactsClient"/> that
+            wraps the underlying HTTP communication with the Contacts resource domain.
+            </remarks>
+        </member>
+        <member name="P:DevexpApiSdk.DevexpApiClient.Messages">
+            <summary>
+            Provides access to all Messages API operations, including sending messages
+            and retrieving delivery status.
+            </summary>
+            <remarks>
+            This property returns an instance of <see cref="T:DevexpApiSdk.Messages.IMessagesClient"/> that
+            encapsulates all messaging-related endpoints.
+            </remarks>
+        </member>
+        <member name="M:DevexpApiSdk.DevexpApiClient.#ctor(DevexpApiSdk.Common.DevexpApiOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DevexpApiSdk.DevexpApiClient"/> class with the specified options.
+            </summary>
+            <param name="options">
+            Optional configuration options for the API client. If <c>null</c>, a default configuration
+            will be created using <see cref="M:DevexpApiSdk.Common.DevexpApiOptionsBuilder.CreateDefault"/>.
+            </param>
+            <exception cref="!:ApiKeyMissingException">
+            Thrown when the provided <paramref name="options"/> do not contain a valid API key.
+            </exception>
+        </member>
+        <member name="M:DevexpApiSdk.DevexpApiClient.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DevexpApiSdk.DevexpApiClient"/> class
+            using the specified API key.
+            </summary>
+            <param name="apiKey">
+            The API key used for authenticating requests against the Devexp API.
+            </param>
+            <exception cref="!:ApiKeyMissingException">
+            Thrown when <paramref name="apiKey"/> is <c>null</c>, empty, or invalid.
+            </exception>
+        </member>
+        <member name="T:DevexpApiSdk.IDevexpApiClient">
+            <summary>
+            Defines the contract for the Devexp API client,
+            providing access to all resource domain sub-clients.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.IDevexpApiClient.Contacts">
+            <summary>
+            Gets the client for interacting with the Contacts resource domain.
+            </summary>
+        </member>
+        <member name="P:DevexpApiSdk.IDevexpApiClient.Messages">
+            <summary>
+            Gets the client for interacting with the Messages resource domain.
+            </summary>
+        </member>
+    </members>
+</doc>
