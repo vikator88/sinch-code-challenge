@@ -35,10 +35,10 @@ switch (sampleName)
         await MessageSample.RunAsync(cancellationToken);
         break;
     case "logger":
-        await WithLoggerSample.RunAsync();
+        await WithLoggerSample.RunAsync(cancellationToken);
         break;
     case "profiler":
-        await WithLoggerProfilerSample.RunAsync();
+        await WithLoggerProfilerSample.RunAsync(cancellationToken);
         break;
 
     default:

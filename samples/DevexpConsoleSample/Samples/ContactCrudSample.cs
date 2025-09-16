@@ -7,7 +7,7 @@ namespace DevexpApiSdk.Samples
     {
         public static async Task RunAsync(CancellationToken cancellationToken)
         {
-            IDevexpApiClient client = new DevexpApiClient("there-is-no-key");
+            IDevexpApiClient client = new DevexpApiClient("there-is-no-key"); // Creates client with default options
 
             // Create a new contact request
             var newContactRequest = new CreateContactRequest()

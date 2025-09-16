@@ -39,6 +39,17 @@ namespace DevexpApiSdk.Common
         }
 
         /// <summary>
+        /// Sets the base URL for the API.
+        /// </summary>
+        /// <param name="baseUrl">The base URL string.</param>
+        /// <returns>The current <see cref="DevexpApiOptionsBuilder"/> instance.</returns>
+        public DevexpApiOptionsBuilder WithBaseUrl(string baseUrl)
+        {
+            _options = _options with { BaseUrl = baseUrl };
+            return this;
+        }
+
+        /// <summary>
         /// Sets the maximum HTTP timeout for requests.
         /// </summary>
         /// <param name="timeout">The maximum time to wait before a request times out.</param>
@@ -65,6 +76,16 @@ namespace DevexpApiSdk.Common
                 MaxRetryAttempts = maxAttempts,
                 RetryDelayInMilliseconds = delay ?? TimeSpan.FromMilliseconds(2000)
             };
+            return this;
+        }
+
+        /// <summary>
+        /// Disables automatic retries for transient failures.
+        /// </summary>
+        /// <returns>The current <see cref="DevexpApiOptionsBuilder"/> instance.</returns>
+        public DevexpApiOptionsBuilder DisableRetries()
+        {
+            _options = _options with { EnableAutoRetries = false };
             return this;
         }
 
