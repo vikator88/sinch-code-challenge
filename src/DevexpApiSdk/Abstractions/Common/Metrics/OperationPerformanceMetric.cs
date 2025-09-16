@@ -6,7 +6,7 @@ namespace DevexpApiSdk.Common.Metrics
     /// <remarks>
     /// This model is typically passed to the <see cref="DevexpApiOptions.OnOperationCompleted"/> callback when metrics are enabled.
     /// </remarks>
-    public class OperationPerformanceMetric
+    public record OperationPerformanceMetric
     {
         /// <summary>
         /// Gets the logical name of the operation being executed.

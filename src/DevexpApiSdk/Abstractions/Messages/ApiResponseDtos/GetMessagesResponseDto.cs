@@ -2,9 +2,9 @@ using DevexpApiSdk.Messages.Models;
 
 namespace DevexpApiSdk.Messages.ApiResponseDtos
 {
-    // This set of classes are internal because they're only used for deserialization within the SDK and not exposed to consumers.
+    // This set of records are internal because they're only used for deserialization within the SDK and not exposed to consumers.
     // Properties are public to allow set them during deserialization.
-    internal class GetMessagesResponseDto
+    internal record GetMessagesResponseDto
     {
         public List<MessageDto> Messages { get; set; } = new();
 
@@ -15,12 +15,12 @@ namespace DevexpApiSdk.Messages.ApiResponseDtos
         public int QuantityPerPage { get; set; }
     }
 
-    internal class MessagesData
+    internal record MessagesData
     {
         public Dictionary<Guid, ContactDto> Contacts { get; set; } = new();
     }
 
-    internal class MessageDto
+    internal record MessageDto
     {
         public Guid Id { get; set; }
 
@@ -37,7 +37,7 @@ namespace DevexpApiSdk.Messages.ApiResponseDtos
         public DateTime? DeliveredAt { get; set; }
     }
 
-    internal class ContactDto
+    internal record ContactDto
     {
         public string Name { get; set; } = string.Empty;
 

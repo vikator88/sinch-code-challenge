@@ -1,6 +1,6 @@
 namespace DevexpApiSdk.Messages.Models
 {
-    public class CreateMessageRequest
+    public record CreateMessageRequest
     {
         /// <summary>
         /// Gets or sets the body content of the message.
@@ -33,7 +33,7 @@ namespace DevexpApiSdk.Messages.Models
     /// This model is nested within <see cref="CreateMessageRequest"/>
     /// to reference an existing contact as the recipient.
     /// </remarks>
-    public class CreateMessageContactRequest
+    public record CreateMessageContactRequest
     {
         /// <summary>
         /// Gets or sets the unique identifier of the recipient contact.

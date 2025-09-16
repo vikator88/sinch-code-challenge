@@ -7,7 +7,7 @@ namespace DevexpApiSdk.Contacts.Models
     /// A contact is uniquely identified by <see cref="Id"/> and contains
     /// basic attributes such as <see cref="Name"/> and <see cref="Phone"/>.
     /// </remarks>
-    public class Contact
+    public record Contact
     {
         /// <summary>
         /// Gets or sets the unique identifier of the contact.

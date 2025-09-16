@@ -7,7 +7,7 @@ namespace DevexpApiSdk.Contacts.Models
     /// This request model is consumed by the <c>Contacts</c> endpoint when
     /// invoking operations such as <c>AddContactAsync</c>.
     /// </remarks>
-    public class CreateContactRequest
+    public record CreateContactRequest
     {
         /// <summary>
         /// Gets or sets the display name of the contact to create.

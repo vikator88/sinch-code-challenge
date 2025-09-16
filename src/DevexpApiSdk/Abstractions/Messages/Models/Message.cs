@@ -9,7 +9,7 @@ namespace DevexpApiSdk.Messages.Models
     /// A message contains content, sender and recipient information,
     /// delivery status, and timestamps for creation and delivery.
     /// </remarks>
-    public class Message
+    public record Message
     {
         /// <summary>
         /// Gets or sets the unique identifier of the message.
