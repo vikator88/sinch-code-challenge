@@ -37,7 +37,7 @@ namespace DevexpApiSdk.Tests.Common.Security
         public void VerifySignature_InvalidSignature_ReturnsFalse()
         {
             // Arrange
-            var invalidAuthHeader = "Signature deadbeef";
+            var invalidAuthHeader = "Signature AntoineGriezmann"; // obviously invalid
 
             // Act
             var result = WebhookVerifier.VerifySignature(Message, invalidAuthHeader, Secret);

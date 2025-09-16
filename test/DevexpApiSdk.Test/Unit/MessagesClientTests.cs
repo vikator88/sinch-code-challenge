@@ -122,8 +122,8 @@ namespace MyApiSdk.Tests.Messages
         [Test]
         public async Task SendMessageAsync_WithContact_ShouldPostMessage()
         {
-            var contact = new Contact { Id = Guid.NewGuid(), Name = "John" };
-            var expectedMessage = new Message { Id = Guid.NewGuid(), Content = "Hello John" };
+            var contact = new Contact { Id = Guid.NewGuid(), Name = "Victor" };
+            var expectedMessage = new Message { Id = Guid.NewGuid(), Content = "Hello Victor" };
             var response = new DevexpApiResponse<Message>(expectedMessage, HttpStatusCode.Created);
 
             _httpMock
@@ -137,13 +137,13 @@ namespace MyApiSdk.Tests.Messages
                 )
                 .ReturnsAsync(response);
 
-            var result = await _client.SendMessageAsync("me", "Hello John", contact);
+            var result = await _client.SendMessageAsync("me", "Hello Victor", contact);
 
-            Assert.That(result.Content, Is.EqualTo("Hello John"));
+            Assert.That(result.Content, Is.EqualTo("Hello Victor"));
         }
 
         [Test]
-        public async Task SendMessageAsync_WithMultipleContacts_NoBulk_ShouldSendSequentially()
+        public async Task SendMessageAsync_WithMultipleContacts_ShouldSendSequentially()
         {
             var contact1 = new Contact { Id = Guid.NewGuid(), Name = "A" };
             var contact2 = new Contact { Id = Guid.NewGuid(), Name = "B" };

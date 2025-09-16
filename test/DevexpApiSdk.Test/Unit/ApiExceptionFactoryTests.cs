@@ -39,13 +39,14 @@ namespace MyApiSdk.Tests.Http
         public void Create_ShouldReturnNotFoundException_When404()
         {
             var response = new HttpResponseMessage(HttpStatusCode.NotFound);
-            var rawBody = @"{ ""id"": ""123"", ""message"": ""User not found"" }";
+            string ResourceId = Guid.NewGuid().ToString();
+            var rawBody = $@"{{ ""id"": ""{ResourceId}"", ""message"": ""User not found"" }}";
 
             var ex = ApiExceptionFactory.Create(response, rawBody);
 
             Assert.That(ex, Is.TypeOf<ApiNotFoundException>());
             var notFoundEx = (ApiNotFoundException)ex;
-            Assert.That(notFoundEx.ResourceId, Is.EqualTo("123"));
+            Assert.That(notFoundEx.ResourceId, Is.EqualTo(ResourceId));
             Assert.That(notFoundEx.ApiMessage, Is.EqualTo("User not found"));
         }
 
@@ -53,40 +54,40 @@ namespace MyApiSdk.Tests.Http
         public void Create_ShouldReturnServerException_When500()
         {
             var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-            var rawBody = @"{ ""message"": ""Database down"" }";
+            var rawBody = @"{ ""message"": ""Database is down"" }";
 
             var ex = ApiExceptionFactory.Create(response, rawBody);
 
             Assert.That(ex, Is.TypeOf<ApiServerException>());
             var serverEx = (ApiServerException)ex;
             Assert.That(serverEx.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
-            Assert.That(serverEx.ApiMessage, Is.EqualTo("Database down"));
+            Assert.That(serverEx.ApiMessage, Is.EqualTo("Database is down"));
         }
 
         [Test]
         public void Create_ShouldReturnGenericApiException_WhenUnexpectedCode()
         {
             var response = new HttpResponseMessage((HttpStatusCode)418); // I'm a teapot
-            var rawBody = @"{ ""message"": ""Short and stout"" }";
+            var rawBody = @"{ ""message"": ""I'm a teapot"" }";
 
             var ex = ApiExceptionFactory.Create(response, rawBody);
 
             Assert.That(ex, Is.TypeOf<ApiException>());
             var apiEx = (ApiException)ex;
             Assert.That(apiEx.StatusCode, Is.EqualTo((HttpStatusCode)418));
-            Assert.That(apiEx.ApiMessage, Is.EqualTo("Short and stout"));
+            Assert.That(apiEx.ApiMessage, Is.EqualTo("I'm a teapot"));
         }
 
         [Test]
         public void Create_ShouldHandleJsonWithoutExpectedFields()
         {
             var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
-            var rawBody = @"{ ""foo"": ""bar"" }"; // no tiene "message"
+            var rawBody = @"{ ""foo"": ""bar"" }"; // Error response without 'message' or 'id' or 'error'
 
             var ex = ApiExceptionFactory.Create(response, rawBody);
 
             Assert.That(ex, Is.TypeOf<ApiException>());
-            // el factory mete "unknown validation error" cuando no hay message
+            // factory sets "no additional error information" when no message is present
             Assert.That(ex.ApiMessage, Is.EqualTo("no additional error information"));
         }
 
@@ -99,7 +100,7 @@ namespace MyApiSdk.Tests.Http
             var ex = ApiExceptionFactory.Create(response, rawBody);
 
             Assert.That(ex, Is.TypeOf<ApiException>());
-            // el factory mete "unexpected error" cuando no hay message
+            // factory sets "no additional error information" when no message is present
             Assert.That(ex.ApiMessage, Is.EqualTo("no additional error information"));
         }
     }

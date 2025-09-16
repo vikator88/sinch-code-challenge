@@ -12,7 +12,7 @@ namespace DevexpApiSdk.Samples
             // Create a new contact request
             var newContactRequest = new CreateContactRequest()
             {
-                Name = "John Doe",
+                Name = "Fernando Torres",
                 Phone = "+34666555444",
             };
 

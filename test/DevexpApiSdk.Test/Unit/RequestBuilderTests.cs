@@ -37,8 +37,8 @@ namespace MyApiSdk.Tests.Http
             Assert.That(request.RequestUri!.ToString(), Is.EqualTo(path));
 
             var content = request.Content!.ReadAsStringAsync().Result;
-            Assert.That(content, Does.Contain("test").IgnoreCase); // name serializado
-            Assert.That(content, Does.Contain("600111222")); // phone serializado
+            Assert.That(content, Does.Contain("test").IgnoreCase); // name serialized
+            Assert.That(content, Does.Contain("600111222")); // phone serialized
 
             Assert.That(
                 request.Content!.Headers.ContentType!.MediaType,

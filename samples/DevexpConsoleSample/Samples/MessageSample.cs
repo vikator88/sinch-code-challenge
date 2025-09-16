@@ -10,7 +10,7 @@ namespace DevexpApiSdk.Samples
 
             // Adding a contact to send a message to
             var contact = await client.Contacts.AddContactAsync(
-                "Victor Tester",
+                "Cholo Simeone",
                 "+34666555777",
                 cancellationToken
             );

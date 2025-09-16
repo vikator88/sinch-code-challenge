@@ -60,7 +60,7 @@ namespace DevexpApiSdk.Tests.Contacts
                 );
 
             // Act
-            var result = await _sut.GetContactsAsync(); // pageNumber = 1 by default, pageSize = 20 by default
+            var result = await _sut.GetContactsAsync(); // pageNumber = 1 by default
 
             // Assert
             Assert.That(result.Items, Has.Count.EqualTo(1));
@@ -121,7 +121,7 @@ namespace DevexpApiSdk.Tests.Contacts
             // Act
             await _sut.DeleteContactAsync(contactId);
 
-            // Assert → verificamos que se llamó con DELETE
+            // Assert that the HTTP DELETE was called with the correct URL
             _httpMock.Verify(
                 h =>
                     h.SendAsync(

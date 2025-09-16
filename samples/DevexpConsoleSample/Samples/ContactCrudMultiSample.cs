@@ -12,10 +12,10 @@ namespace DevexpApiSdk.Samples
             // Create 4 newContact requests
             var newContactRequests = new List<CreateContactRequest>
             {
-                new CreateContactRequest() { Name = "Alice Smith", Phone = "+34666555441" },
-                new CreateContactRequest() { Name = "Bob Johnson", Phone = "+34666555442" },
-                new CreateContactRequest() { Name = "Charlie Brown", Phone = "+34666555443" },
-                new CreateContactRequest() { Name = "Diana Prince", Phone = "+34666555444" },
+                new CreateContactRequest() { Name = "Julian Alvarez", Phone = "+34666555441" },
+                new CreateContactRequest() { Name = "Antoine Griezmann", Phone = "+34666555442" },
+                new CreateContactRequest() { Name = "Rodrigo De Paul", Phone = "+34666555443" },
+                new CreateContactRequest() { Name = "Jan Oblak", Phone = "+34666555444" },
             };
 
             // Add multiple contacts
@@ -26,7 +26,7 @@ namespace DevexpApiSdk.Samples
 
             // Create a contact without model
 
-            var name = "Eve Adams";
+            var name = "Cholo Simeone";
             var phone = "+34666555445";
             Contact createdContact = await client.Contacts.AddContactAsync(
                 name,

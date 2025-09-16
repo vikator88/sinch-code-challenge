@@ -52,7 +52,7 @@ namespace DevexpApiSdk.Contacts
 
             // Wrap the operation with metrics collection
             return await _executionWrapper.ExecuteAsync<Contact>(
-                "Contacts.AddContact",
+                "Contacts.AddContact", // Operaation name should be defined as a constant somewhere
                 async () =>
                 {
                     var body = new { name, phone };

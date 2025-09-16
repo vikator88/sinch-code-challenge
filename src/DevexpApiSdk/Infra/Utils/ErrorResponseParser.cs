@@ -17,13 +17,13 @@ namespace DevexpApiSdk.Utils
                 if (dto == null)
                     return null;
 
-                // normalizar: si `error` está presente, úsalo como Message
+                // Normalize: if error has value, use it as message (ApiExceptionFactory uses Message property)
                 if (!string.IsNullOrEmpty(dto.Error))
                 {
                     dto.Message = dto.Error;
                 }
 
-                // si no hay ni message, ni error, ni id → devolvemos null
+                // If there's neither a message, nor an error, nor an id return null
                 if (string.IsNullOrEmpty(dto.Message) && string.IsNullOrEmpty(dto.Id))
                     return null;
 
@@ -31,7 +31,7 @@ namespace DevexpApiSdk.Utils
             }
             catch (JsonException)
             {
-                return null; // JSON inválido
+                return null; // Invalid JSON
             }
         }
     }
