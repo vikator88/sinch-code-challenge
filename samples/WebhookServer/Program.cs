@@ -3,24 +3,25 @@ using DevexpApiSdk.Common.Security;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-const string secret = "mySecret"; // en real, vendría de configuración
+// Just for testing. In production, use a secure secret and store it safely
+const string secret = "mySecret";
 
 app.MapPost(
     "/webhooks",
     async (HttpRequest request, HttpResponse response) =>
     {
-        // 1. Leer el body
+        // Read the request body
         using var reader = new StreamReader(request.Body);
         var body = await reader.ReadToEndAsync();
 
-        // 2. Leer header Authorization
+        // 2. Read the Authorization header
         if (!request.Headers.TryGetValue("Authorization", out var authHeader))
         {
             response.StatusCode = StatusCodes.Status401Unauthorized;
             return;
         }
 
-        // 3. Verificar firma usando el SDK
+        // 3. Verify using SDK
         var valid = WebhookVerifier.VerifySignature(body, authHeader!, secret);
         if (!valid)
         {
@@ -28,7 +29,7 @@ app.MapPost(
             return;
         }
 
-        // 4. Procesar evento
+        // 4. Process the event (just print it here)
         Console.WriteLine("Received webhook event:");
         Console.WriteLine(body);
 
